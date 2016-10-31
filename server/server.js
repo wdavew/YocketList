@@ -16,9 +16,10 @@ app.use((req,res,next) =>{
   next();
 });
 
-// Easter egg for API server <3 YOCKET LIST
-app.get('/', (req, res) => {
-  res.status(200).send("Yocket List! Where Yockets meets Lists. Yocket List!");
+//Route for specific room
+
+app.get('/rooms/:room', (req,res) => {
+
 });
 
 // Post body do /queue should be formatted like so:
@@ -36,10 +37,10 @@ app.post('/queue', (req, res) => {
   console.log(req.body);
   if(req.body.method){
     if(req.body.method === 'delete'){
-      // doing app.delete resulted in interesting CORS issues 
+      // doing app.delete resulted in interesting CORS issues
       // with preflight requirements. Even with the cors Headers
       // above. We are hackily using req.body.method to simulate RESTful
-      // behavior. 
+      // behavior.
       console.log(`/queue :: [DELETE] removing first item from ${qArray}`);
       qArray.shift();
       console.log(`/queue :: [DELETE] result of delete ${qArray}`);
