@@ -91,4 +91,4 @@ http.listen(3000, () => {
  *  - when a player window deletes an item from the database
  */
 
-module.export = { app };
+module.exports = app;
