@@ -62,15 +62,16 @@ io.on('connection', (socket) => {
   socket.emit('connectestablished', socket.id);
 
   //joining a room
-  socket.on('room', (id, data) => {
-    red.roomExists.then((res) => {
-      if (res === 1) {
-        socket.join(room);
-        socket.emit('Found room, joining');
-      } else {
-        socket.emit('Room does not exist');
-      }
-    });
+  socket.on('room', (data) => {
+    console.log('receiving room signal');
+    // red.roomExists.then((res) => {
+    //   if (res === 1) {
+    //     socket.join(room);
+    //     socket.emit('Found room, joining');
+    //   } else {
+    //     socket.emit('Room does not exist');
+    //   }
+    // });
   });
 });
   //creating a room

@@ -12,6 +12,12 @@ module.exports = {
   entry: {
     index: './client/index.jsx'
   },
+  // allows testing with enzyme
+  externals: {
+    'react/addons': true,
+    'react/lib/ExecutionEnvironment': true,
+    'react/lib/ReactContext': true
+  },
   // specifies where webpack will dump the compiled files
   output: { 
     path: './dist/',
