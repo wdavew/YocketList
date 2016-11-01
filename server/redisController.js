@@ -38,8 +38,19 @@ let red = {
 		.then(client.zremrangebyrankAsync([`${roomNum}videos`, 0, 0]))
 		.then(resp => urlOfNextVideo[0])
 		.catch(err => console.log('error in return video'));
-	}
+	},
 
+//
+	createRoom: function(roomNum){
+		roomExists(roomNum).then(response => {
+			if (response === 1) client.hset(['rooms', roomNum, 1]);
+			else throw new Error('room already exists');
+		})
+	},
+	//
+	roomExists: function(roomNum){
+		return client.hexistsAsync(['rooms', roomNum]);
+	}
 };
 
 

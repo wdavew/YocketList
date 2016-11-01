@@ -61,22 +61,22 @@ io.on('connection', (socket) => {
   console.log(`User connected ${socket.id}`);
   socket.emit('connectestablished', socket.id);
 
-  //joining a room
-  socket.on('room', (id, data) => {
-     if(red.roomExists){
+//joining a room
+socket.on('room', (id, data) => {
+   red.roomExists.then( (res) => {
+    if (res === 1) {
       socket.join(room);
       socket.emit('Found room, joining');
     } else {
-      socket.emit('Room does not exist');
-    }
-  });
+    socket.emit('Room does not exist');
+  }
+});
 });
 
+//creating a room
 app.post('/room', (req,res) => {
   let url = req.body.roomname;
-
   red.createRoom(url).then(res.status(200)).catch(res.status(400));
-
 });
 
 /////
