@@ -1,7 +1,7 @@
 {
   "name": "yocketlist",
-  "version": "0.0.1",
-  "description": "Yocket list is a Youtube Queueing system for playing a queue of youtube videos. It allow users to sign on remotely from the player machine and add videos to the queue in realtime. YocketList uses React, NodeJS, SocketIO, and Postgres.",
+  "version": "0.0.2",
+  "description": "QTube is a Youtube Queueing system for playing a queue of youtube videos. It allow users to sign on remotely from the player machine and add videos to the queue in realtime. QTube uses React, NodeJS, SocketIO and Redis.",
   "main": "server/server.js",
   "scripts": {
     "test": "mocha test",
