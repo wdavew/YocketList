@@ -1,0 +1,61 @@
+import React, { Component } from 'react';
+import io from 'socket.io-client';
+import { browserHistory } from 'react-router';
+
+const HOST = "http://localhost:3000";
+
+class Home extends Component {
+  constructor() {
+    super();
+    this.socket = io.connect(HOST);
+    
+    this.createRoom = this.createRoom.bind(this);
+    this.joinRoom = this.joinRoom.bind(this);
+  }
+  
+  createRoom(clickEvent) {
+    clickEvent.preventDefault();
+    const form = document.forms.createRoom;
+    const roomName = form.roomToCreate.value;
+    $.ajax({
+      type: "POST",
+      url: HOST + "/createRoom",
+      data: JSON.stringify({ roomName }),
+      contentType: "application/json; charset=utf-8",
+    })
+      .done(() => browserHistory.push('/queue'))
+      .fail(() => browserHistory.push('/queue'));
+    form.roomToCreate.value = '';
+  }
+
+  joinRoom(clickEvent) {
+    clickEvent.preventDefault();
+    const form = document.forms.joinRoom;
+    const roomName = form.roomToJoin.value;
+    this.socket.emit('room', { roomName });
+    form.roomToJoin.value = '';
+  }
+  
+  componentDidMount() {
+    this.socket.on('joiningRoom', ({ roomName }) => browserHistory.push(`/queue/${roomName}`));
+    this.socket.on('roomDoesNotExist', () => alert('Please enter a valid room name.'));
+  }
+
+  render() {
+    return (
+      <div>
+        <form name='createRoom'>
+          <input id='roomToCreate' type="text" name="roomToCreate"></input>
+          <button onClick={this.createRoom}>Create room</button>
+        </form>
+        <form name='joinRoom'>
+          <input id='roomToJoin' type="text" name="roomToJoin"></input>
+          <button onClick={this.joinRoom}>Join room</button>
+        </form>
+      </div>
+    );
+  }
+
+}
+
+export default Home

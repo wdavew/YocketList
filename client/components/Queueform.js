@@ -19,7 +19,7 @@ const QueueForm = ({ formClick }) => {
       <input id='link' type="text" name="link"></input>
       <button onClick={handleClick}>Submit</button>
     </form>
-  )
+  );
 }
 
 export default QueueForm;

@@ -40,7 +40,7 @@ describe('SocketIO Integration', () => {
       request(HOST)
         .post('/queue')
         .send({method: 'delete'})
-        .expect(200, () => {}); // this empty callback is necesary for request to complete call
+        .expect(200, () => {}); // this empty callback is necessary for request to complete call
     });
   });
 });

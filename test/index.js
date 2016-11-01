@@ -4,6 +4,7 @@ require('babel-register')({
   presets: ['es2015', 'react'],
 });
 
+require('./js/enzyme.js');
+require('./js/redis');
+require('./js/socketio');
 require('./js/supertest');
-// require('./js/socketio');
-// require('./js/redis');
