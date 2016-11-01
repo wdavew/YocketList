@@ -27,6 +27,7 @@
     "babelify": "^7.3.0",
     "body-parser": "^1.15.2",
     "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
     "chai-enzyme": "^0.5.2",
     "chai-immutable": "^1.6.0",
     "ejs": "^2.5.2",
