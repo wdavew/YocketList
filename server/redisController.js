@@ -36,6 +36,7 @@ let red = {
 		})
 		return urlOfNextVideo;
 	}
+
 };
 
 
