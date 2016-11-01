@@ -2,6 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var bodyparser = require('body-parser');
+var SocketPage = require('./room.js');
 
 /* Database */
 const qArray = [];
@@ -15,12 +16,6 @@ app.use((req,res,next) =>{
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
   next();
-});
-
-//Route for specific room
-
-app.get('/rooms/:room', (req,res) => {
-  let roomId = req.params.rooms;
 });
 
 // Post body do /queue should be formatted like so:
@@ -62,11 +57,29 @@ app.post('/queue', (req, res) => {
 });
 
 /* Socket and Server Setup */
-io.on('connect', (socket) => {
+io.on('connection', (socket) => {
   console.log(`User connected ${socket.id}`);
   socket.emit('connectestablished', socket.id);
-})
 
+//joining a room
+socket.on('room', (id, data) => {
+   red.roomExists.then( (res) => {
+    if (res === 1) {
+      socket.join(room);
+      socket.emit('Found room, joining');
+    } else {
+    socket.emit('Room does not exist');
+  }
+});
+});
+
+//creating a room
+app.post('/room', (req,res) => {
+  let url = req.body.roomname;
+  red.createRoom(url).then(res.status(200)).catch(res.status(400));
+});
+
+/////
 http.listen(3000, () => {
   console.log("Server started on port 3000");
 });
@@ -78,4 +91,4 @@ http.listen(3000, () => {
  *  - when a player window deletes an item from the database
  */
 
-module.export = app;
+module.export = { app };
