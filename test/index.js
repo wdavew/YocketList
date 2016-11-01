@@ -5,5 +5,5 @@ require('babel-register')({
 });
 
 require('./js/supertest');
-require('./js/socketio');
-require('./js/redis');
+// require('./js/socketio');
+// require('./js/redis');
