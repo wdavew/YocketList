@@ -19,7 +19,7 @@ app.use((req,res,next) =>{
 //Route for specific room
 
 app.get('/rooms/:room', (req,res) => {
-
+  let roomId = req.params.rooms;
 });
 
 // Post body do /queue should be formatted like so:

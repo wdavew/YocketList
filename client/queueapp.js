@@ -15,7 +15,7 @@ class QueueApp extends React.Component {
 
     this.socket = io.connect('http://localhost:3000');
     this.initializeListeners();
-  } 
+  }
   /**
    * We GET our initial set of data here after the first render
    * has been made.
@@ -32,7 +32,7 @@ class QueueApp extends React.Component {
       this.getData();
     });
   }
-  
+
   componentDidMount() {
     this.getData();
   }
@@ -44,7 +44,7 @@ class QueueApp extends React.Component {
   formClick(link) {
     // TODO this functionality should be replaced with socket logic.
     let newQueues = [...this.state.queues];
-    newQueues.push(link); 
+    newQueues.push(link);
     this.setState({ queues: newQueues});
     $.ajax({
       url: "http://localhost:3000/queue",
