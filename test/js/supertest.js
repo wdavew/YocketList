@@ -4,10 +4,7 @@ const app = require('../../server/server.js');
 const PORT = 3000;
 const HOST = `http://localhost:${PORT}`;
 const io = require('socket.io');
-
-const {
-  expect
-} = require('chai');
+const { expect } = require('chai');
 
 describe('Route integration', () => {
   describe('Server has / route', () =>{
@@ -22,12 +19,12 @@ describe('Route integration', () => {
 
   describe('Server has /queue route', () => {
     describe('GET', () => {
-      it('should repond with a 200 status code', done => {
+      it('should respond with a 200 status code', done => {
         request(HOST)
           .get('/queue')
           .expect(200, done);
       });
-      it('should repond with an array of youtube urls', done =>{
+      it('should respond with an array of youtube urls', done =>{
         request(HOST)
           .get('/queue')
           .expect((res) => {
