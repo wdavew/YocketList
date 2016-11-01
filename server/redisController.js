@@ -9,8 +9,8 @@ client.on("error", function (err) {
 
 let red = {
 	// adds administrator with given roomnum key
-	 addAdmin: function (roomNum, cookie) {
-		return client.setAsync(`${roomNum}admin`, cookie)
+	 addAdmin: function (roomNum) {
+		return client.setAsync(`${roomNum}admin`)
 	},
 
 	//adds a video with the given roomnum key
@@ -26,7 +26,7 @@ let red = {
 			});
 		})
 	},
-	
+
 	//increments score of a video
 	 incScore: function (roomNum, videoUrl) {
 		return client.zincrbyAsync([`${roomNum}videos`, 1, videoUrl])

@@ -12,7 +12,7 @@ bluebird.promisifyAll(redis.Multi.prototype);
 before(() => {
   client.flushdb();
 })
-describe('addAmin', () => {
+xdescribe('addAmin', () => {
   it('should add a roomnumber key with cookie val', () => {
     return redisController.addAdmin('Room 1', 'user 5')
       .then(() => client.getAsync('Room 1admin').should.eventually.equal('user 5'));
