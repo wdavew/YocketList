@@ -15,11 +15,18 @@ let red = {
 
 	//adds a video with the given roomnum key
 	 addVideo: function (roomNum, videoUrl) {
-		return client.zaddAsync([`${roomNum}videos`, 0, videoUrl])
+		
+		// check if video is already queued
+		return client.zscoreAsync(`${roomNum}videos`, videoUrl)
+		.then((response) => {
+			if (response) throw new Error('video already in queue');
+			else return client.zaddAsync([`${roomNum}videos`, 0, videoUrl])
 			.catch((err) => {
 				throw err;
 			});
-	},
+		})
+	},	
+
 
 	//increments score of a video
 	 incScore: function (roomNum, videoUrl) {
@@ -60,7 +67,16 @@ let red = {
 	// returns all videos in queue sorted by votes as an array
 	returnQueue: function (roomNum) {
 		return client.zrevrangeAsync([`${roomNum}videos`, 0, -1])
+	}, 
+
+	// removes a video from the queue and throws error if the url is not currently queued
+	removeFromQueue: function (roomNum, videoUrl) {
+		return client.zremAsync(`${roomNum}videos`, videoUrl)
+		.then((resp) => {
+			if (resp === 0) throw new Error('the video url does not exist');
+		})
 	}
+	
 };
 
 

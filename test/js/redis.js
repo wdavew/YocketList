@@ -24,6 +24,9 @@ describe('addVideo', () => {
     return redisController.addVideo('Room 1', 'www.video.com')
       .then(() => client.zrangeAsync('Room 1videos', '0', '0').should.eventually.deep.equal(['www.video.com']));
   });
+  it('should throw error if the video url is already in the room\'s queue', () => {
+    return redisController.addVideo('Room 1', 'www.video.com').should.be.rejectedWith('video already in queue')
+  });
 });
 
 describe('incScore', () => {
@@ -93,21 +96,14 @@ describe('returnQueue', () => {
     return redisController.returnQueue('Room 1').then(resp => Array.isArray(resp)).should.be.ok;
   })
 
-  xdescribe('removeFromQueue', () => {
+  describe('removeFromQueue', () => {
     it('should remove a video from the queue', () => {
-      return redisController.removeFromQueue('www.video3.com')
+      return redisController.removeFromQueue('Room 1', 'www.video3.com')
         .then(client.zscoreAsync('Room 1videos', 'www.video3.com').should.eventually.equal(null));
     });
     it('should throw an error if the provided url is not in the queue', () => {
-      return redisController.removeFromQueue('www.videothatdoesnotexisst.com')
-        .then(client.zscoreAsync('Room 1videos', 'www.video3.com').should.be.rejectedWith('provided url does not exist in queue'));
-    });
-  })
+      return redisController.removeFromQueue('Room 1', 'www.videothatdoesnotexisst.com').should.be.rejectedWith('the video url does not exist');
+  });
+})
 
-  xdescribe('removeFromQueue', () => {
-    it('should remove a video from the queue', () => {
-      return redisController.removeFromQueue('www.video3.com')
-        .then(client.zscoreAsync('Room 1videos', 'www.video3.com').should.eventually.equal(null));
-    });
-  })
 });
