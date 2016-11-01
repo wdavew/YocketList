@@ -25,9 +25,8 @@ let red = {
 				throw err;
 			});
 		})
-	},	
-
-
+	},
+	
 	//increments score of a video
 	 incScore: function (roomNum, videoUrl) {
 		return client.zincrbyAsync([`${roomNum}videos`, 1, videoUrl])
@@ -36,7 +35,6 @@ let red = {
 				throw (err)
 			});
 		},
-
 
 	// remove & return 'next' video
 	// will return a promise object that resolves to the video url
@@ -64,12 +62,12 @@ let red = {
 			.then(response => Boolean(response));
 	},
 
-	// returns all videos in queue sorted by votes as an array
+	// returns all videos in queue sorted by votes (descending) as an array
 	returnQueue: function (roomNum) {
 		return client.zrevrangeAsync([`${roomNum}videos`, 0, -1])
 	}, 
 
-	// removes a video from the queue and throws error if the url is not currently queued
+	// removes a video from the queuxe and throws error if the url is not currently queued
 	removeFromQueue: function (roomNum, videoUrl) {
 		return client.zremAsync(`${roomNum}videos`, videoUrl)
 		.then((resp) => {
