@@ -11,7 +11,7 @@ const qArray = [];
 /* Express Middleware */
 app.use(bodyparser.json());
 // CORS headers
-app.use((req, res, next) =>{
+app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
@@ -61,34 +61,27 @@ io.on('connection', (socket) => {
   console.log(`User connected ${socket.id}`);
   socket.emit('connectestablished', socket.id);
 
-//joining a room
-socket.on('room', (id, data) => {
-   red.roomExists.then( (res) => {
-    if (res === 1) {
-      socket.join(room);
-      socket.emit('Found room, joining');
-    } else {
-    socket.emit('Room does not exist');
-  }
+  //joining a room
+  socket.on('room', (id, data) => {
+    red.roomExists.then((res) => {
+      if (res === 1) {
+        socket.join(room);
+        socket.emit('Found room, joining');
+      } else {
+        socket.emit('Room does not exist');
+      }
+    });
+  });
 });
-});
+  //creating a room
+  app.post('/room', (req, res) => {
+    let url = req.body.roomname;
+    red.createRoom(url).then(res.status(200)).catch(res.status(400));
+  });
 
-//creating a room
-app.post('/room', (req,res) => {
-  let url = req.body.roomname;
-  red.createRoom(url).then(res.status(200)).catch(res.status(400));
-});
+  /////
+  http.listen(3000, () => {
+    console.log("Server started on port 3000");
+  });
 
-/////
-http.listen(3000, () => {
-  console.log("Server started on port 3000");
-});
-
-/** Socket Event Spec
- * This is a list of socket events and their triggers
- * Emit ['newdata']: notifies subscribers to query for new data
- *  - when any user saves an item to the database
- *  - when a player window deletes an item from the database
- */
-
-module.exports = app;
+  module.exports = { app };
