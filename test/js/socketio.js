@@ -5,10 +5,7 @@ const PORT = 3000;
 const HOST = `http://localhost:${PORT}`;
 const io = require('socket.io');
 const ioClient = require('socket.io-client');
-
-const {
-  expect
-} = require('chai');
+const { expect } = require('chai');
 
 describe('SocketIO Integration', () => {
   describe('Client sockets connect to Server sockets', () =>{
@@ -21,7 +18,7 @@ describe('SocketIO Integration', () => {
     });
   });
   describe('Client on newdata event', () => {
-    it('Client sockets should recieve newdata event with post requests', done => {
+    it('Client sockets should receive newdata event with post requests', done => {
       let socket = ioClient.connect(HOST);
       socket.on('newdata', (data) => {
         expect(data).to.be.a('number');
@@ -33,7 +30,7 @@ describe('SocketIO Integration', () => {
         .send({link: 'https://www.youtube.com/watch?v=_9vK_F0XnfA'})
         .expect(200, () => {}); // this empty callback is necesary for request to complete call
     });
-    it('Client sockets should recieve newdata event with post requests', done => {
+    it('Client sockets should receive newdata event with post requests', done => {
       let socket = ioClient.connect(HOST);
       socket.on('newdata', (data) => {
         expect(data).to.be.a('number');
