@@ -38,6 +38,26 @@ let red = {
 		.then(client.zremrangebyrankAsync([`${roomNum}videos`, 0, 0]))
 		.then(resp => urlOfNextVideo[0])
 		.catch(err => console.log('error in return video'));
+	},
+
+	// creates a room if it does not already exist; throws error if the room exists
+	createRoom: function(roomNum){
+		return this.roomExists(roomNum).then(response => {
+			if (!response) {
+				return client.hsetAsync(['rooms', roomNum, 1]);
+			} else throw new Error('room already exists');
+		})
+	},
+
+	// returns a boolean indicating whether or not the provided room exists
+	roomExists: function(roomNum){
+		return client.hexistsAsync(['rooms', roomNum])
+		.then(response => Boolean(response));
+	},
+
+	// returns all videos in queue sorted by votes as an array
+	returnQueue: function(roomNum){
+		return client.zrevrangeAsync([`${roomNum}videos`, 0, -1])
 	}
 };
 
