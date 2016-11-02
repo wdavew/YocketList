@@ -49,7 +49,7 @@ class Home extends Component {
       <div id="home">
         <h1 id="Qtube">QTube</h1>
         <form name='createRoom'>
-          <input id="roomToCreate" type="text" name="roomToCreate" autofocus></input>
+          <input id="roomToCreate" type="text" name="roomToCreate"></input>
           <button id="create-room" onClick={this.createRoom}>Create room</button>
         </form>
         <form name='joinRoom'>

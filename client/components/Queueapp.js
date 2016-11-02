@@ -178,14 +178,16 @@ render() {
   console.log(this.state.queues);
 
   return (
-    <div className="youtube-wrapper">
-      <h1>Welcome to QTube! Your room is: {this.props.params.roomName}</h1>
+    <div>
+      <h1>Room: {this.props.params.roomName}</h1>
       <Form key={'form-key'} formClick={this.formClick} />
-      <ReactPlayer id='youtube-component' ref={player => { this.player = player }}
-      url={videoUrl} playing={this.state.playing} controls={true}
-      onPlay={this.adminOnPlay} onPause={this.adminOnPause} onEnded={this.handlePlayerEnd} 
-      onProgress={this.onProgress} progressFrequency={500} onReady = {this.syncWithAdmin}/>
-      <QueueList thumbnailClick={this.thumbnailClick} queues={this.state.queues} />
+      <div className="youtube-wrapper">
+        <ReactPlayer id='youtube-component' ref={player => { this.player = player }}
+        url={videoUrl} playing={this.state.playing} controls={true}
+        onPlay={this.adminOnPlay} onPause={this.adminOnPause} onEnded={this.handlePlayerEnd} 
+        onProgress={this.onProgress} progressFrequency={500} onReady = {this.syncWithAdmin}/>
+        <QueueList thumbnailClick={this.thumbnailClick} queues={this.state.queues} />
+      </div>
     </div>
   )
 }
