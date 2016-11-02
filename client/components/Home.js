@@ -46,14 +46,15 @@ class Home extends Component {
 
   render() {
     return (
-      <div>
+      <div id="home">
+        <h1 id="Qtube">QTube</h1>
         <form name='createRoom'>
-          <input id='roomToCreate' type="text" name="roomToCreate"></input>
-          <button onClick={this.createRoom}>Create room</button>
+          <input id="roomToCreate" type="text" name="roomToCreate" autofocus></input>
+          <button id="create-room" onClick={this.createRoom}>Create room</button>
         </form>
         <form name='joinRoom'>
           <input id='roomToJoin' type="text" name="roomToJoin"></input>
-          <button onClick={this.joinRoom}>Join room</button>
+          <button id="join-room" onClick={this.joinRoom}>Join room</button>
         </form>
       </div>
     );
