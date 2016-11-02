@@ -60,6 +60,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	__webpack_require__(357);
+
 	_reactDom2.default.render(_react2.default.createElement(_Layout2.default, null), document.getElementById('App'));
 
 /***/ },
@@ -21451,11 +21453,11 @@
 
 	var _Home2 = _interopRequireDefault(_Home);
 
-	var _RouteNotFound = __webpack_require__(278);
+	var _RouteNotFound = __webpack_require__(279);
 
 	var _RouteNotFound2 = _interopRequireDefault(_RouteNotFound);
 
-	var _Queueapp = __webpack_require__(279);
+	var _Queueapp = __webpack_require__(280);
 
 	var _Queueapp2 = _interopRequireDefault(_Queueapp);
 
@@ -26461,9 +26463,10 @@
 	        data: JSON.stringify({ roomName: roomName }),
 	        contentType: "application/json; charset=utf-8"
 	      }).done(function () {
-	        return _reactRouter.browserHistory.push('/queue');
+	        localStorage.setItem('admin' + roomName, 'true');
+	        _reactRouter.browserHistory.push('/queue/' + roomName);
 	      }).fail(function () {
-	        return _reactRouter.browserHistory.push('/queue');
+	        return alert('room name taken');
 	      });
 	      form.roomToCreate.value = '';
 	    }
@@ -26494,9 +26497,14 @@
 	        'div',
 	        { id: 'home' },
 	        _react2.default.createElement(
+	          'h1',
+	          { id: 'Qtube' },
+	          'QTube'
+	        ),
+	        _react2.default.createElement(
 	          'form',
 	          { name: 'createRoom' },
-	          _react2.default.createElement('input', { id: 'roomToCreate', type: 'text', name: 'roomToCreate' }),
+	          _react2.default.createElement('input', { id: 'roomToCreate', type: 'text', name: 'roomToCreate', autofocus: true }),
 	          _react2.default.createElement(
 	            'button',
 	            { id: 'create-room', onClick: this.createRoom },
@@ -26634,7 +26642,7 @@
 	 */
 
 	exports.Manager = __webpack_require__(243);
-	exports.Socket = __webpack_require__(270);
+	exports.Socket = __webpack_require__(271);
 
 
 /***/ },
@@ -28972,14 +28980,14 @@
 	 */
 
 	var eio = __webpack_require__(244);
-	var Socket = __webpack_require__(270);
-	var Emitter = __webpack_require__(271);
+	var Socket = __webpack_require__(271);
+	var Emitter = __webpack_require__(272);
 	var parser = __webpack_require__(235);
-	var on = __webpack_require__(273);
-	var bind = __webpack_require__(274);
+	var on = __webpack_require__(274);
+	var bind = __webpack_require__(275);
 	var debug = __webpack_require__(232)('socket.io-client:manager');
-	var indexOf = __webpack_require__(268);
-	var Backoff = __webpack_require__(277);
+	var indexOf = __webpack_require__(269);
+	var Backoff = __webpack_require__(278);
 
 	/**
 	 * IE6+ hasOwnProperty
@@ -29561,13 +29569,13 @@
 	 */
 
 	var transports = __webpack_require__(247);
-	var Emitter = __webpack_require__(239);
+	var Emitter = __webpack_require__(262);
 	var debug = __webpack_require__(232)('engine.io-client:socket');
-	var index = __webpack_require__(268);
+	var index = __webpack_require__(269);
 	var parser = __webpack_require__(253);
 	var parseuri = __webpack_require__(231);
-	var parsejson = __webpack_require__(269);
-	var parseqs = __webpack_require__(262);
+	var parsejson = __webpack_require__(270);
+	var parseqs = __webpack_require__(263);
 
 	/**
 	 * Module exports.
@@ -30300,8 +30308,8 @@
 
 	var XMLHttpRequest = __webpack_require__(248);
 	var XHR = __webpack_require__(250);
-	var JSONP = __webpack_require__(265);
-	var websocket = __webpack_require__(266);
+	var JSONP = __webpack_require__(266);
+	var websocket = __webpack_require__(267);
 
 	/**
 	 * Export transports.
@@ -30427,8 +30435,8 @@
 
 	var XMLHttpRequest = __webpack_require__(248);
 	var Polling = __webpack_require__(251);
-	var Emitter = __webpack_require__(239);
-	var inherit = __webpack_require__(263);
+	var Emitter = __webpack_require__(262);
+	var inherit = __webpack_require__(264);
 	var debug = __webpack_require__(232)('engine.io-client:polling-xhr');
 
 	/**
@@ -30850,10 +30858,10 @@
 	 */
 
 	var Transport = __webpack_require__(252);
-	var parseqs = __webpack_require__(262);
+	var parseqs = __webpack_require__(263);
 	var parser = __webpack_require__(253);
-	var inherit = __webpack_require__(263);
-	var yeast = __webpack_require__(264);
+	var inherit = __webpack_require__(264);
+	var yeast = __webpack_require__(265);
 	var debug = __webpack_require__(232)('engine.io-client:polling');
 
 	/**
@@ -31101,7 +31109,7 @@
 	 */
 
 	var parser = __webpack_require__(253);
-	var Emitter = __webpack_require__(239);
+	var Emitter = __webpack_require__(262);
 
 	/**
 	 * Module exports.
@@ -32456,6 +32464,176 @@
 /* 262 */
 /***/ function(module, exports) {
 
+	
+	/**
+	 * Expose `Emitter`.
+	 */
+
+	module.exports = Emitter;
+
+	/**
+	 * Initialize a new `Emitter`.
+	 *
+	 * @api public
+	 */
+
+	function Emitter(obj) {
+	  if (obj) return mixin(obj);
+	};
+
+	/**
+	 * Mixin the emitter properties.
+	 *
+	 * @param {Object} obj
+	 * @return {Object}
+	 * @api private
+	 */
+
+	function mixin(obj) {
+	  for (var key in Emitter.prototype) {
+	    obj[key] = Emitter.prototype[key];
+	  }
+	  return obj;
+	}
+
+	/**
+	 * Listen on the given `event` with `fn`.
+	 *
+	 * @param {String} event
+	 * @param {Function} fn
+	 * @return {Emitter}
+	 * @api public
+	 */
+
+	Emitter.prototype.on =
+	Emitter.prototype.addEventListener = function(event, fn){
+	  this._callbacks = this._callbacks || {};
+	  (this._callbacks[event] = this._callbacks[event] || [])
+	    .push(fn);
+	  return this;
+	};
+
+	/**
+	 * Adds an `event` listener that will be invoked a single
+	 * time then automatically removed.
+	 *
+	 * @param {String} event
+	 * @param {Function} fn
+	 * @return {Emitter}
+	 * @api public
+	 */
+
+	Emitter.prototype.once = function(event, fn){
+	  var self = this;
+	  this._callbacks = this._callbacks || {};
+
+	  function on() {
+	    self.off(event, on);
+	    fn.apply(this, arguments);
+	  }
+
+	  on.fn = fn;
+	  this.on(event, on);
+	  return this;
+	};
+
+	/**
+	 * Remove the given callback for `event` or all
+	 * registered callbacks.
+	 *
+	 * @param {String} event
+	 * @param {Function} fn
+	 * @return {Emitter}
+	 * @api public
+	 */
+
+	Emitter.prototype.off =
+	Emitter.prototype.removeListener =
+	Emitter.prototype.removeAllListeners =
+	Emitter.prototype.removeEventListener = function(event, fn){
+	  this._callbacks = this._callbacks || {};
+
+	  // all
+	  if (0 == arguments.length) {
+	    this._callbacks = {};
+	    return this;
+	  }
+
+	  // specific event
+	  var callbacks = this._callbacks[event];
+	  if (!callbacks) return this;
+
+	  // remove all handlers
+	  if (1 == arguments.length) {
+	    delete this._callbacks[event];
+	    return this;
+	  }
+
+	  // remove specific handler
+	  var cb;
+	  for (var i = 0; i < callbacks.length; i++) {
+	    cb = callbacks[i];
+	    if (cb === fn || cb.fn === fn) {
+	      callbacks.splice(i, 1);
+	      break;
+	    }
+	  }
+	  return this;
+	};
+
+	/**
+	 * Emit `event` with the given args.
+	 *
+	 * @param {String} event
+	 * @param {Mixed} ...
+	 * @return {Emitter}
+	 */
+
+	Emitter.prototype.emit = function(event){
+	  this._callbacks = this._callbacks || {};
+	  var args = [].slice.call(arguments, 1)
+	    , callbacks = this._callbacks[event];
+
+	  if (callbacks) {
+	    callbacks = callbacks.slice(0);
+	    for (var i = 0, len = callbacks.length; i < len; ++i) {
+	      callbacks[i].apply(this, args);
+	    }
+	  }
+
+	  return this;
+	};
+
+	/**
+	 * Return array of callbacks for `event`.
+	 *
+	 * @param {String} event
+	 * @return {Array}
+	 * @api public
+	 */
+
+	Emitter.prototype.listeners = function(event){
+	  this._callbacks = this._callbacks || {};
+	  return this._callbacks[event] || [];
+	};
+
+	/**
+	 * Check if this emitter has `event` handlers.
+	 *
+	 * @param {String} event
+	 * @return {Boolean}
+	 * @api public
+	 */
+
+	Emitter.prototype.hasListeners = function(event){
+	  return !! this.listeners(event).length;
+	};
+
+
+/***/ },
+/* 263 */
+/***/ function(module, exports) {
+
 	/**
 	 * Compiles a querystring
 	 * Returns string representation of the object
@@ -32496,7 +32674,7 @@
 
 
 /***/ },
-/* 263 */
+/* 264 */
 /***/ function(module, exports) {
 
 	
@@ -32508,7 +32686,7 @@
 	};
 
 /***/ },
-/* 264 */
+/* 265 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -32582,7 +32760,7 @@
 
 
 /***/ },
-/* 265 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -32591,7 +32769,7 @@
 	 */
 
 	var Polling = __webpack_require__(251);
-	var inherit = __webpack_require__(263);
+	var inherit = __webpack_require__(264);
 
 	/**
 	 * Module exports.
@@ -32820,7 +32998,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 266 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -32829,9 +33007,9 @@
 
 	var Transport = __webpack_require__(252);
 	var parser = __webpack_require__(253);
-	var parseqs = __webpack_require__(262);
-	var inherit = __webpack_require__(263);
-	var yeast = __webpack_require__(264);
+	var parseqs = __webpack_require__(263);
+	var inherit = __webpack_require__(264);
+	var yeast = __webpack_require__(265);
 	var debug = __webpack_require__(232)('engine.io-client:websocket');
 	var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 
@@ -32844,7 +33022,7 @@
 	var WebSocket = BrowserWebSocket;
 	if (!WebSocket && typeof window === 'undefined') {
 	  try {
-	    WebSocket = __webpack_require__(267);
+	    WebSocket = __webpack_require__(268);
 	  } catch (e) { }
 	}
 
@@ -33101,13 +33279,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 267 */
+/* 268 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 268 */
+/* 269 */
 /***/ function(module, exports) {
 
 	
@@ -33122,7 +33300,7 @@
 	};
 
 /***/ },
-/* 269 */
+/* 270 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -33160,7 +33338,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 270 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -33169,12 +33347,12 @@
 	 */
 
 	var parser = __webpack_require__(235);
-	var Emitter = __webpack_require__(271);
-	var toArray = __webpack_require__(272);
-	var on = __webpack_require__(273);
-	var bind = __webpack_require__(274);
+	var Emitter = __webpack_require__(272);
+	var toArray = __webpack_require__(273);
+	var on = __webpack_require__(274);
+	var bind = __webpack_require__(275);
 	var debug = __webpack_require__(232)('socket.io-client:socket');
-	var hasBin = __webpack_require__(275);
+	var hasBin = __webpack_require__(276);
 
 	/**
 	 * Module exports.
@@ -33585,7 +33763,7 @@
 
 
 /***/ },
-/* 271 */
+/* 272 */
 /***/ function(module, exports) {
 
 	
@@ -33752,7 +33930,7 @@
 
 
 /***/ },
-/* 272 */
+/* 273 */
 /***/ function(module, exports) {
 
 	module.exports = toArray
@@ -33771,7 +33949,7 @@
 
 
 /***/ },
-/* 273 */
+/* 274 */
 /***/ function(module, exports) {
 
 	
@@ -33801,7 +33979,7 @@
 
 
 /***/ },
-/* 274 */
+/* 275 */
 /***/ function(module, exports) {
 
 	/**
@@ -33830,7 +34008,7 @@
 
 
 /***/ },
-/* 275 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -33838,7 +34016,7 @@
 	 * Module requirements.
 	 */
 
-	var isArray = __webpack_require__(276);
+	var isArray = __webpack_require__(277);
 
 	/**
 	 * Module exports.
@@ -33896,7 +34074,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 276 */
+/* 277 */
 /***/ function(module, exports) {
 
 	module.exports = Array.isArray || function (arr) {
@@ -33905,7 +34083,7 @@
 
 
 /***/ },
-/* 277 */
+/* 278 */
 /***/ function(module, exports) {
 
 	
@@ -33996,7 +34174,7 @@
 
 
 /***/ },
-/* 278 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34023,7 +34201,7 @@
 	exports.default = RouteNotFound;
 
 /***/ },
-/* 279 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34038,19 +34216,19 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactYoutube = __webpack_require__(280);
+	var _reactYoutube = __webpack_require__(281);
 
 	var _reactYoutube2 = _interopRequireDefault(_reactYoutube);
 
-	var _Queue = __webpack_require__(341);
+	var _Queue = __webpack_require__(342);
 
 	var _Queue2 = _interopRequireDefault(_Queue);
 
-	var _Queueform = __webpack_require__(342);
+	var _Queueform = __webpack_require__(343);
 
 	var _Queueform2 = _interopRequireDefault(_Queueform);
 
-	var _Queuelist = __webpack_require__(343);
+	var _Queuelist = __webpack_require__(344);
 
 	var _Queuelist2 = _interopRequireDefault(_Queuelist);
 
@@ -34058,9 +34236,11 @@
 
 	var _socket2 = _interopRequireDefault(_socket);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _reactPlayer = __webpack_require__(346);
 
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	var _reactPlayer2 = _interopRequireDefault(_reactPlayer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -34078,57 +34258,140 @@
 
 	    var _this = _possibleConstructorReturn(this, (QueueApp.__proto__ || Object.getPrototypeOf(QueueApp)).call(this, props));
 
-	    _this.state = { queues: [] };
+	    _this.state = {
+	      queues: [],
+	      video: '',
+	      playing: true,
+	      startPosition: 0,
+	      played: 0
+	    };
 	    _this.socket = _socket2.default.connect(HOST);
-
 	    _this.getData = _this.getData.bind(_this);
 	    _this.formClick = _this.formClick.bind(_this);
-	    _this.handleStateChange = _this.handleStateChange.bind(_this);
 	    _this.handlePlayerEnd = _this.handlePlayerEnd.bind(_this);
+	    _this.adminOnPause = _this.adminOnPause.bind(_this);
+	    _this.adminOnPlay = _this.adminOnPlay.bind(_this);
+	    _this.adminSendVid = _this.adminSendVid.bind(_this);
+	    _this.setCurrentVideo = _this.setCurrentVideo.bind(_this);
+	    _this.pauseVideo = _this.pauseVideo.bind(_this);
+	    _this.playVideo = _this.playVideo.bind(_this);
+	    _this.onProgress = _this.onProgress.bind(_this);
+	    _this.syncWithAdmin = _this.syncWithAdmin.bind(_this);
 	    return _this;
 	  }
 	  /**
 	   * We GET our data here after each render
 	   */
 
-
 	  _createClass(QueueApp, [{
+	    key: 'onProgress',
+	    value: function onProgress(_ref) {
+	      var played = _ref.played;
+
+	      var position = parseFloat(played);
+	      this.setState({ played: position });
+	      console.log(this.state.played);
+	    }
+	  }, {
+	    key: 'userIsAdmin',
+	    value: function userIsAdmin() {
+	      return Boolean(localStorage.getItem('admin' + this.props.params.roomName));
+	    }
+	  }, {
+	    key: 'setCurrentVideo',
+	    value: function setCurrentVideo(_ref2) {
+	      var url = _ref2.url,
+	          start = _ref2.start;
+
+	      console.log('received url', url);
+	      this.setState({ video: url, startPosition: start });
+	    }
+	  }, {
+	    key: 'adminSendVid',
+	    value: function adminSendVid() {
+	      console.log('adminsendvid');
+	      console.log(this.admin);
+	      if (this.admin) {
+	        console.log('sending vid url to new user');
+	        this.socket.emit('currentVideo', {
+	          room: this.props.params.roomName,
+	          url: this.state.video,
+	          start: this.state.played
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'adminOnPlay',
+	    value: function adminOnPlay() {
+	      if (this.admin) {
+	        this.socket.emit('adminPlay', { room: this.props.params.roomName });
+	      }
+	    }
+	  }, {
+	    key: 'adminOnPause',
+	    value: function adminOnPause() {
+	      if (this.admin) {
+	        this.socket.emit('adminPause', { room: this.props.params.roomName });
+	      }
+	    }
+	  }, {
+	    key: 'playVideo',
+	    value: function playVideo() {
+	      console.log('playing video');
+	      this.setState({ playing: true });
+	    }
+	  }, {
+	    key: 'pauseVideo',
+	    value: function pauseVideo() {
+	      console.log('pausing');
+	      this.setState({ playing: false });
+	    }
+	  }, {
 	    key: 'getData',
 	    value: function getData() {
 	      var _this2 = this;
 
-	      $.get(HOST + "/queue").done(function (data) {
-	        return _this2.setState({ queues: data });
-	      });
+	      if (this.state.video === '' && this.admin) {
+	        $.ajax({
+	          type: "GET",
+	          url: HOST + ('/getNextVideo/' + this.props.params.roomName),
+	          contentType: "application/json; charset=utf-8"
+	        }).done(function (response) {
+	          _this2.setState({ video: response });
+	          _this2.adminSendVid();
+	          _this2.socket.emit('refreshQueue', { room: _this2.props.params.roomName });
+	        });
+	      } else {
+	        $.get(HOST + ('/queue/' + this.props.params.roomName)).done(function (data) {
+	          return _this2.setState({ queues: data });
+	        });
+	      }
 	    }
-	    /**
-	    * handleStateChange is an event listener for the react-youtube
-	    * component's state. The states are as follows:
-	    * UNSTARTED: -1, ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3, CUED: 5
-	    */
-
 	  }, {
-	    key: 'handleStateChange',
-	    value: function handleStateChange(event) {
-	      // CUED was a good option for enabling "auto play" because it waits
-	      // until the player is loaded (-1) and then the video is cued ready to play.
-	      // ENDED allows repeat behavior for last video.
-	      if (event.data === 5 || event.data === 0) event.target.playVideo();
+	    key: 'syncWithAdmin',
+	    value: function syncWithAdmin() {
+	      if (!this.admin) this.player.seekTo(this.state.startPosition);
 	    }
 	    /**
-	     * This method makes a post request to the server with the body {method: 'delete'}
-	     * This removes an item from the db and notifies all clients with the newdata event.
+	     * TODO: get access to url that the admin wants to remove
 	     */
 
 	  }, {
 	    key: 'handlePlayerEnd',
 	    value: function handlePlayerEnd(event) {
-	      $.ajax({
-	        type: "POST",
-	        url: HOST + "/queue",
-	        data: JSON.stringify({ method: "delete" }),
-	        contentType: "application/json; charset=utf-8"
-	      });
+	      var _this3 = this;
+
+	      if (this.admin) {
+	        $.ajax({
+	          type: "GET",
+	          url: HOST + ('/getNextVideo/' + this.props.params.roomName),
+	          contentType: "application/json; charset=utf-8"
+	        }).done(function (response) {
+	          _this3.setState({ video: response });
+	          _this3.adminSendVid();
+	          _this3.socket.emit('refreshQueue', { room: _this3.props.params.roomName });
+	        });
+	      }
 	    }
 	    /**
 	     * This is the callback for the form component to use in onClick.
@@ -34138,16 +34401,16 @@
 	  }, {
 	    key: 'formClick',
 	    value: function formClick(link) {
-	      // TODO this functionality should be replaced with socket logic.
-	      var newQueues = [].concat(_toConsumableArray(this.state.queues));
-	      newQueues.push(link);
-	      this.setState({ queues: newQueues });
+	      var _this4 = this;
+
 	      $.ajax({
-	        url: HOST + "/queue",
+	        url: HOST + '/addToQueue',
 	        type: "POST",
-	        data: JSON.stringify({ link: link }),
+	        data: JSON.stringify({ link: link, room: this.props.params.roomName }),
 	        contentType: "application/json; charset=utf-8",
 	        dataType: "json"
+	      }).done(function () {
+	        return _this4.socket.emit('newdata');
 	      });
 	    }
 	    /**
@@ -34164,13 +34427,24 @@
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      this.getData();
+	      this.admin = this.userIsAdmin();
+	      this.socket.emit('room', { roomName: this.props.params.roomName });
 	      this.socket.on('newdata', this.getData);
+	      this.socket.on('play', this.playVideo);
+	      this.socket.on('pause', this.pauseVideo);
+	      this.socket.on('newUser', this.adminSendVid);
+	      this.socket.on('vidUrl', this.setCurrentVideo);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this5 = this;
+
 	      var videoUrl = void 0;
-	      if (this.state.queues.length) videoUrl = this.state.queues[0].split('=')[1];
+	      if (this.state.video) {
+	        videoUrl = this.state.video;
+	      }
+	      console.log(this.state.queues);
 
 	      return _react2.default.createElement(
 	        'div',
@@ -34182,7 +34456,12 @@
 	          this.props.params.roomName
 	        ),
 	        _react2.default.createElement(_Queueform2.default, { key: 'form-key', formClick: this.formClick }),
-	        _react2.default.createElement(_reactYoutube2.default, { videoId: videoUrl, onEnd: this.handlePlayerEnd, onStateChange: this.handleStateChange }),
+	        _react2.default.createElement(_reactPlayer2.default, { id: 'youtube-component', ref: function ref(player) {
+	            _this5.player = player;
+	          },
+	          url: videoUrl, playing: this.state.playing, controls: true,
+	          onPlay: this.adminOnPlay, onPause: this.adminOnPause, onEnded: this.handlePlayerEnd,
+	          onProgress: this.onProgress, progressFrequency: 500, onReady: this.syncWithAdmin }),
 	        _react2.default.createElement(_Queuelist2.default, { queues: this.state.queues })
 	      );
 	    }
@@ -34194,7 +34473,7 @@
 	exports.default = QueueApp;
 
 /***/ },
-/* 280 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34211,11 +34490,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _lodash = __webpack_require__(281);
+	var _lodash = __webpack_require__(282);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _youtubePlayer = __webpack_require__(282);
+	var _youtubePlayer = __webpack_require__(283);
 
 	var _youtubePlayer2 = _interopRequireDefault(_youtubePlayer);
 
@@ -34563,7 +34842,7 @@
 	exports.default = YouTube;
 
 /***/ },
-/* 281 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -36219,12 +36498,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(237)(module)))
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _isString2 = __webpack_require__(283);
+	var _isString2 = __webpack_require__(284);
 
 	var _isString3 = _interopRequireDefault(_isString2);
 
@@ -36232,19 +36511,19 @@
 	    value: true
 	});
 
-	var _sister = __webpack_require__(292);
+	var _sister = __webpack_require__(293);
 
 	var _sister2 = _interopRequireDefault(_sister);
 
-	var _bluebird = __webpack_require__(293);
+	var _bluebird = __webpack_require__(294);
 
 	var _bluebird2 = _interopRequireDefault(_bluebird);
 
-	var _loadYouTubeIframeAPI = __webpack_require__(295);
+	var _loadYouTubeIframeAPI = __webpack_require__(296);
 
 	var _loadYouTubeIframeAPI2 = _interopRequireDefault(_loadYouTubeIframeAPI);
 
-	var _YouTubePlayer = __webpack_require__(297);
+	var _YouTubePlayer = __webpack_require__(298);
 
 	var _YouTubePlayer2 = _interopRequireDefault(_YouTubePlayer);
 
@@ -36315,12 +36594,12 @@
 
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(284),
-	    isArray = __webpack_require__(290),
-	    isObjectLike = __webpack_require__(291);
+	var baseGetTag = __webpack_require__(285),
+	    isArray = __webpack_require__(291),
+	    isObjectLike = __webpack_require__(292);
 
 	/** `Object#toString` result references. */
 	var stringTag = '[object String]';
@@ -36351,12 +36630,12 @@
 
 
 /***/ },
-/* 284 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(285),
-	    getRawTag = __webpack_require__(288),
-	    objectToString = __webpack_require__(289);
+	var Symbol = __webpack_require__(286),
+	    getRawTag = __webpack_require__(289),
+	    objectToString = __webpack_require__(290);
 
 	/** `Object#toString` result references. */
 	var nullTag = '[object Null]',
@@ -36386,10 +36665,10 @@
 
 
 /***/ },
-/* 285 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var root = __webpack_require__(286);
+	var root = __webpack_require__(287);
 
 	/** Built-in value references. */
 	var Symbol = root.Symbol;
@@ -36398,10 +36677,10 @@
 
 
 /***/ },
-/* 286 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var freeGlobal = __webpack_require__(287);
+	var freeGlobal = __webpack_require__(288);
 
 	/** Detect free variable `self`. */
 	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -36413,7 +36692,7 @@
 
 
 /***/ },
-/* 287 */
+/* 288 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -36424,10 +36703,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 288 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(285);
+	var Symbol = __webpack_require__(286);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -36476,7 +36755,7 @@
 
 
 /***/ },
-/* 289 */
+/* 290 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -36504,7 +36783,7 @@
 
 
 /***/ },
-/* 290 */
+/* 291 */
 /***/ function(module, exports) {
 
 	/**
@@ -36536,7 +36815,7 @@
 
 
 /***/ },
-/* 291 */
+/* 292 */
 /***/ function(module, exports) {
 
 	/**
@@ -36571,7 +36850,7 @@
 
 
 /***/ },
-/* 292 */
+/* 293 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -36637,7 +36916,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 293 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process, global, setImmediate) {/* @preserve
@@ -42238,10 +42517,10 @@
 
 	},{"./es5":13}]},{},[4])(4)
 	});                    ;if (typeof window !== 'undefined' && window !== null) {                               window.P = window.Promise;                                                     } else if (typeof self !== 'undefined' && self !== null) {                             self.P = self.Promise;                                                         }
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), (function() { return this; }()), __webpack_require__(294).setImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), (function() { return this; }()), __webpack_require__(295).setImmediate))
 
 /***/ },
-/* 294 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(3).nextTick;
@@ -42320,10 +42599,10 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(294).setImmediate, __webpack_require__(294).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(295).setImmediate, __webpack_require__(295).clearImmediate))
 
 /***/ },
-/* 295 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42332,11 +42611,11 @@
 	    value: true
 	});
 
-	var _bluebird = __webpack_require__(293);
+	var _bluebird = __webpack_require__(294);
 
 	var _bluebird2 = _interopRequireDefault(_bluebird);
 
-	var _loadScript = __webpack_require__(296);
+	var _loadScript = __webpack_require__(297);
 
 	var _loadScript2 = _interopRequireDefault(_loadScript);
 
@@ -42378,7 +42657,7 @@
 
 
 /***/ },
-/* 296 */
+/* 297 */
 /***/ function(module, exports) {
 
 	
@@ -42449,16 +42728,16 @@
 
 
 /***/ },
-/* 297 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _upperFirst2 = __webpack_require__(298);
+	var _upperFirst2 = __webpack_require__(299);
 
 	var _upperFirst3 = _interopRequireDefault(_upperFirst2);
 
-	var _forEach2 = __webpack_require__(310);
+	var _forEach2 = __webpack_require__(311);
 
 	var _forEach3 = _interopRequireDefault(_forEach2);
 
@@ -42466,11 +42745,11 @@
 	    value: true
 	});
 
-	var _functionNames = __webpack_require__(339);
+	var _functionNames = __webpack_require__(340);
 
 	var _functionNames2 = _interopRequireDefault(_functionNames);
 
-	var _eventNames = __webpack_require__(340);
+	var _eventNames = __webpack_require__(341);
 
 	var _eventNames2 = _interopRequireDefault(_eventNames);
 
@@ -42540,10 +42819,10 @@
 
 
 /***/ },
-/* 298 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var createCaseFirst = __webpack_require__(299);
+	var createCaseFirst = __webpack_require__(300);
 
 	/**
 	 * Converts the first character of `string` to upper case.
@@ -42568,13 +42847,13 @@
 
 
 /***/ },
-/* 299 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var castSlice = __webpack_require__(300),
-	    hasUnicode = __webpack_require__(302),
-	    stringToArray = __webpack_require__(303),
-	    toString = __webpack_require__(306);
+	var castSlice = __webpack_require__(301),
+	    hasUnicode = __webpack_require__(303),
+	    stringToArray = __webpack_require__(304),
+	    toString = __webpack_require__(307);
 
 	/**
 	 * Creates a function like `_.lowerFirst`.
@@ -42607,10 +42886,10 @@
 
 
 /***/ },
-/* 300 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseSlice = __webpack_require__(301);
+	var baseSlice = __webpack_require__(302);
 
 	/**
 	 * Casts `array` to a slice if it's needed.
@@ -42631,7 +42910,7 @@
 
 
 /***/ },
-/* 301 */
+/* 302 */
 /***/ function(module, exports) {
 
 	/**
@@ -42668,7 +42947,7 @@
 
 
 /***/ },
-/* 302 */
+/* 303 */
 /***/ function(module, exports) {
 
 	/** Used to compose unicode character classes. */
@@ -42698,12 +42977,12 @@
 
 
 /***/ },
-/* 303 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var asciiToArray = __webpack_require__(304),
-	    hasUnicode = __webpack_require__(302),
-	    unicodeToArray = __webpack_require__(305);
+	var asciiToArray = __webpack_require__(305),
+	    hasUnicode = __webpack_require__(303),
+	    unicodeToArray = __webpack_require__(306);
 
 	/**
 	 * Converts `string` to an array.
@@ -42722,7 +43001,7 @@
 
 
 /***/ },
-/* 304 */
+/* 305 */
 /***/ function(module, exports) {
 
 	/**
@@ -42740,7 +43019,7 @@
 
 
 /***/ },
-/* 305 */
+/* 306 */
 /***/ function(module, exports) {
 
 	/** Used to compose unicode character classes. */
@@ -42784,10 +43063,10 @@
 
 
 /***/ },
-/* 306 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseToString = __webpack_require__(307);
+	var baseToString = __webpack_require__(308);
 
 	/**
 	 * Converts `value` to a string. An empty string is returned for `null`
@@ -42818,13 +43097,13 @@
 
 
 /***/ },
-/* 307 */
+/* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(285),
-	    arrayMap = __webpack_require__(308),
-	    isArray = __webpack_require__(290),
-	    isSymbol = __webpack_require__(309);
+	var Symbol = __webpack_require__(286),
+	    arrayMap = __webpack_require__(309),
+	    isArray = __webpack_require__(291),
+	    isSymbol = __webpack_require__(310);
 
 	/** Used as references for various `Number` constants. */
 	var INFINITY = 1 / 0;
@@ -42861,7 +43140,7 @@
 
 
 /***/ },
-/* 308 */
+/* 309 */
 /***/ function(module, exports) {
 
 	/**
@@ -42888,11 +43167,11 @@
 
 
 /***/ },
-/* 309 */
+/* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(284),
-	    isObjectLike = __webpack_require__(291);
+	var baseGetTag = __webpack_require__(285),
+	    isObjectLike = __webpack_require__(292);
 
 	/** `Object#toString` result references. */
 	var symbolTag = '[object Symbol]';
@@ -42923,13 +43202,13 @@
 
 
 /***/ },
-/* 310 */
+/* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayEach = __webpack_require__(311),
-	    baseEach = __webpack_require__(312),
-	    castFunction = __webpack_require__(337),
-	    isArray = __webpack_require__(290);
+	var arrayEach = __webpack_require__(312),
+	    baseEach = __webpack_require__(313),
+	    castFunction = __webpack_require__(338),
+	    isArray = __webpack_require__(291);
 
 	/**
 	 * Iterates over elements of `collection` and invokes `iteratee` for each element.
@@ -42970,7 +43249,7 @@
 
 
 /***/ },
-/* 311 */
+/* 312 */
 /***/ function(module, exports) {
 
 	/**
@@ -42998,11 +43277,11 @@
 
 
 /***/ },
-/* 312 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseForOwn = __webpack_require__(313),
-	    createBaseEach = __webpack_require__(336);
+	var baseForOwn = __webpack_require__(314),
+	    createBaseEach = __webpack_require__(337);
 
 	/**
 	 * The base implementation of `_.forEach` without support for iteratee shorthands.
@@ -43018,11 +43297,11 @@
 
 
 /***/ },
-/* 313 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseFor = __webpack_require__(314),
-	    keys = __webpack_require__(316);
+	var baseFor = __webpack_require__(315),
+	    keys = __webpack_require__(317);
 
 	/**
 	 * The base implementation of `_.forOwn` without support for iteratee shorthands.
@@ -43040,10 +43319,10 @@
 
 
 /***/ },
-/* 314 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var createBaseFor = __webpack_require__(315);
+	var createBaseFor = __webpack_require__(316);
 
 	/**
 	 * The base implementation of `baseForOwn` which iterates over `object`
@@ -43062,7 +43341,7 @@
 
 
 /***/ },
-/* 315 */
+/* 316 */
 /***/ function(module, exports) {
 
 	/**
@@ -43093,12 +43372,12 @@
 
 
 /***/ },
-/* 316 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayLikeKeys = __webpack_require__(317),
-	    baseKeys = __webpack_require__(329),
-	    isArrayLike = __webpack_require__(333);
+	var arrayLikeKeys = __webpack_require__(318),
+	    baseKeys = __webpack_require__(330),
+	    isArrayLike = __webpack_require__(334);
 
 	/**
 	 * Creates an array of the own enumerable property names of `object`.
@@ -43136,15 +43415,15 @@
 
 
 /***/ },
-/* 317 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseTimes = __webpack_require__(318),
-	    isArguments = __webpack_require__(319),
-	    isArray = __webpack_require__(290),
-	    isBuffer = __webpack_require__(321),
-	    isIndex = __webpack_require__(323),
-	    isTypedArray = __webpack_require__(324);
+	var baseTimes = __webpack_require__(319),
+	    isArguments = __webpack_require__(320),
+	    isArray = __webpack_require__(291),
+	    isBuffer = __webpack_require__(322),
+	    isIndex = __webpack_require__(324),
+	    isTypedArray = __webpack_require__(325);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -43191,7 +43470,7 @@
 
 
 /***/ },
-/* 318 */
+/* 319 */
 /***/ function(module, exports) {
 
 	/**
@@ -43217,11 +43496,11 @@
 
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsArguments = __webpack_require__(320),
-	    isObjectLike = __webpack_require__(291);
+	var baseIsArguments = __webpack_require__(321),
+	    isObjectLike = __webpack_require__(292);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -43259,11 +43538,11 @@
 
 
 /***/ },
-/* 320 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(284),
-	    isObjectLike = __webpack_require__(291);
+	var baseGetTag = __webpack_require__(285),
+	    isObjectLike = __webpack_require__(292);
 
 	/** `Object#toString` result references. */
 	var argsTag = '[object Arguments]';
@@ -43283,11 +43562,11 @@
 
 
 /***/ },
-/* 321 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(286),
-	    stubFalse = __webpack_require__(322);
+	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(287),
+	    stubFalse = __webpack_require__(323);
 
 	/** Detect free variable `exports`. */
 	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -43328,7 +43607,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(237)(module)))
 
 /***/ },
-/* 322 */
+/* 323 */
 /***/ function(module, exports) {
 
 	/**
@@ -43352,7 +43631,7 @@
 
 
 /***/ },
-/* 323 */
+/* 324 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -43380,12 +43659,12 @@
 
 
 /***/ },
-/* 324 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsTypedArray = __webpack_require__(325),
-	    baseUnary = __webpack_require__(327),
-	    nodeUtil = __webpack_require__(328);
+	var baseIsTypedArray = __webpack_require__(326),
+	    baseUnary = __webpack_require__(328),
+	    nodeUtil = __webpack_require__(329);
 
 	/* Node.js helper references. */
 	var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
@@ -43413,12 +43692,12 @@
 
 
 /***/ },
-/* 325 */
+/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(284),
-	    isLength = __webpack_require__(326),
-	    isObjectLike = __webpack_require__(291);
+	var baseGetTag = __webpack_require__(285),
+	    isLength = __webpack_require__(327),
+	    isObjectLike = __webpack_require__(292);
 
 	/** `Object#toString` result references. */
 	var argsTag = '[object Arguments]',
@@ -43479,7 +43758,7 @@
 
 
 /***/ },
-/* 326 */
+/* 327 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -43520,7 +43799,7 @@
 
 
 /***/ },
-/* 327 */
+/* 328 */
 /***/ function(module, exports) {
 
 	/**
@@ -43540,10 +43819,10 @@
 
 
 /***/ },
-/* 328 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(287);
+	/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(288);
 
 	/** Detect free variable `exports`. */
 	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -43569,11 +43848,11 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(237)(module)))
 
 /***/ },
-/* 329 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isPrototype = __webpack_require__(330),
-	    nativeKeys = __webpack_require__(331);
+	var isPrototype = __webpack_require__(331),
+	    nativeKeys = __webpack_require__(332);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -43605,7 +43884,7 @@
 
 
 /***/ },
-/* 330 */
+/* 331 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -43629,10 +43908,10 @@
 
 
 /***/ },
-/* 331 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var overArg = __webpack_require__(332);
+	var overArg = __webpack_require__(333);
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
 	var nativeKeys = overArg(Object.keys, Object);
@@ -43641,7 +43920,7 @@
 
 
 /***/ },
-/* 332 */
+/* 333 */
 /***/ function(module, exports) {
 
 	/**
@@ -43662,11 +43941,11 @@
 
 
 /***/ },
-/* 333 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(334),
-	    isLength = __webpack_require__(326);
+	var isFunction = __webpack_require__(335),
+	    isLength = __webpack_require__(327);
 
 	/**
 	 * Checks if `value` is array-like. A value is considered array-like if it's
@@ -43701,11 +43980,11 @@
 
 
 /***/ },
-/* 334 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(284),
-	    isObject = __webpack_require__(335);
+	var baseGetTag = __webpack_require__(285),
+	    isObject = __webpack_require__(336);
 
 	/** `Object#toString` result references. */
 	var asyncTag = '[object AsyncFunction]',
@@ -43744,7 +44023,7 @@
 
 
 /***/ },
-/* 335 */
+/* 336 */
 /***/ function(module, exports) {
 
 	/**
@@ -43781,10 +44060,10 @@
 
 
 /***/ },
-/* 336 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArrayLike = __webpack_require__(333);
+	var isArrayLike = __webpack_require__(334);
 
 	/**
 	 * Creates a `baseEach` or `baseEachRight` function.
@@ -43819,10 +44098,10 @@
 
 
 /***/ },
-/* 337 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var identity = __webpack_require__(338);
+	var identity = __webpack_require__(339);
 
 	/**
 	 * Casts `value` to `identity` if it's not a function.
@@ -43839,7 +44118,7 @@
 
 
 /***/ },
-/* 338 */
+/* 339 */
 /***/ function(module, exports) {
 
 	/**
@@ -43866,7 +44145,7 @@
 
 
 /***/ },
-/* 339 */
+/* 340 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -43883,7 +44162,7 @@
 
 
 /***/ },
-/* 340 */
+/* 341 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -43900,7 +44179,7 @@
 
 
 /***/ },
-/* 341 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43925,7 +44204,7 @@
 	exports.default = Queue;
 
 /***/ },
-/* 342 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43971,7 +44250,7 @@
 	exports.default = QueueForm;
 
 /***/ },
-/* 343 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43984,7 +44263,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _queue = __webpack_require__(344);
+	var _queue = __webpack_require__(345);
 
 	var _queue2 = _interopRequireDefault(_queue);
 
@@ -43995,10 +44274,9 @@
 
 	  // Create Queue component for URLs. Format validation moved to server.
 	  // Slice at 1 to avoid showing thumbnail for current video playing.
-	  var validUrls = queues.slice(1).map(function (queue, index) {
+	  var validUrls = queues.map(function (queue, index) {
 	    return _react2.default.createElement(_queue2.default, { key: index, link: queue });
 	  });
-
 	  return _react2.default.createElement(
 	    'div',
 	    null,
@@ -44009,7 +44287,7 @@
 	exports.default = QueueList;
 
 /***/ },
-/* 344 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44032,6 +44310,1905 @@
 	};
 
 	exports.default = Queue;
+
+/***/ },
+/* 346 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _props3 = __webpack_require__(347);
+
+	var _YouTube = __webpack_require__(348);
+
+	var _YouTube2 = _interopRequireDefault(_YouTube);
+
+	var _SoundCloud = __webpack_require__(351);
+
+	var _SoundCloud2 = _interopRequireDefault(_SoundCloud);
+
+	var _Vimeo = __webpack_require__(354);
+
+	var _Vimeo2 = _interopRequireDefault(_Vimeo);
+
+	var _FilePlayer = __webpack_require__(353);
+
+	var _FilePlayer2 = _interopRequireDefault(_FilePlayer);
+
+	var _Streamable = __webpack_require__(355);
+
+	var _Streamable2 = _interopRequireDefault(_Streamable);
+
+	var _Vidme = __webpack_require__(356);
+
+	var _Vidme2 = _interopRequireDefault(_Vidme);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ReactPlayer = function (_Component) {
+	  _inherits(ReactPlayer, _Component);
+
+	  function ReactPlayer() {
+	    var _ref;
+
+	    var _temp, _this, _ret;
+
+	    _classCallCheck(this, ReactPlayer);
+
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ReactPlayer.__proto__ || Object.getPrototypeOf(ReactPlayer)).call.apply(_ref, [this].concat(args))), _this), _this.seekTo = function (fraction) {
+	      if (_this.player) {
+	        _this.player.seekTo(fraction);
+	      }
+	    }, _this.progress = function () {
+	      if (_this.props.url && _this.player) {
+	        var loaded = _this.player.getFractionLoaded() || 0;
+	        var played = _this.player.getFractionPlayed() || 0;
+	        var progress = {};
+	        if (loaded !== _this.prevLoaded) {
+	          progress.loaded = loaded;
+	        }
+	        if (played !== _this.prevPlayed && _this.props.playing) {
+	          progress.played = played;
+	        }
+	        if (progress.loaded || progress.played) {
+	          _this.props.onProgress(progress);
+	        }
+	        _this.prevLoaded = loaded;
+	        _this.prevPlayed = played;
+	      }
+	      _this.progressTimeout = setTimeout(_this.progress, _this.props.progressFrequency);
+	    }, _this.ref = function (player) {
+	      _this.player = player;
+	    }, _this.renderPlayer = function (Player) {
+	      var active = Player.canPlay(_this.props.url);
+	      var _this$props = _this.props;
+	      var youtubeConfig = _this$props.youtubeConfig;
+	      var soundcloudConfig = _this$props.soundcloudConfig;
+	      var vimeoConfig = _this$props.vimeoConfig;
+	      var fileConfig = _this$props.fileConfig;
+
+	      var activeProps = _objectWithoutProperties(_this$props, ['youtubeConfig', 'soundcloudConfig', 'vimeoConfig', 'fileConfig']);
+
+	      var props = active ? _extends({}, activeProps, { ref: _this.ref }) : {};
+	      return _react2['default'].createElement(Player, _extends({
+	        key: Player.displayName,
+	        youtubeConfig: youtubeConfig,
+	        soundcloudConfig: soundcloudConfig,
+	        vimeoConfig: vimeoConfig,
+	        fileConfig: fileConfig
+	      }, props));
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+
+	  _createClass(ReactPlayer, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.progress();
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      clearTimeout(this.progressTimeout);
+	    }
+	  }, {
+	    key: 'shouldComponentUpdate',
+	    value: function shouldComponentUpdate(nextProps) {
+	      return this.props.url !== nextProps.url || this.props.playing !== nextProps.playing || this.props.volume !== nextProps.volume || this.props.height !== nextProps.height || this.props.width !== nextProps.width || this.props.hidden !== nextProps.hidden;
+	    }
+	  }, {
+	    key: 'renderPlayers',
+	    value: function renderPlayers() {
+	      // Build array of players to render based on URL and preload config
+	      var _props = this.props;
+	      var url = _props.url;
+	      var youtubeConfig = _props.youtubeConfig;
+	      var vimeoConfig = _props.vimeoConfig;
+
+	      var players = [];
+	      if (_YouTube2['default'].canPlay(url)) {
+	        players.push(_YouTube2['default']);
+	      } else if (_SoundCloud2['default'].canPlay(url)) {
+	        players.push(_SoundCloud2['default']);
+	      } else if (_Vimeo2['default'].canPlay(url)) {
+	        players.push(_Vimeo2['default']);
+	      } else if (_Streamable2['default'].canPlay(url)) {
+	        players.push(_Streamable2['default']);
+	      } else if (_Vidme2['default'].canPlay(url)) {
+	        players.push(_Vidme2['default']);
+	      } else if (url) {
+	        // Fall back to FilePlayer if nothing else can play the URL
+	        players.push(_FilePlayer2['default']);
+	      }
+	      // Render additional players if preload config is set
+	      if (!_YouTube2['default'].canPlay(url) && youtubeConfig.preload) {
+	        players.push(_YouTube2['default']);
+	      }
+	      if (!_Vimeo2['default'].canPlay(url) && vimeoConfig.preload) {
+	        players.push(_Vimeo2['default']);
+	      }
+	      return players.map(this.renderPlayer);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props2 = this.props;
+	      var style = _props2.style;
+	      var width = _props2.width;
+	      var height = _props2.height;
+	      var className = _props2.className;
+	      var hidden = _props2.hidden;
+
+	      var players = this.renderPlayers();
+	      return _react2['default'].createElement(
+	        'div',
+	        { style: _extends({}, style, { width: width, height: height }), className: className, hidden: hidden },
+	        players
+	      );
+	    }
+	  }]);
+
+	  return ReactPlayer;
+	}(_react.Component);
+
+	ReactPlayer.displayName = 'ReactPlayer';
+	ReactPlayer.propTypes = _props3.propTypes;
+	ReactPlayer.defaultProps = _props3.defaultProps;
+	exports['default'] = ReactPlayer;
+	module.exports = exports['default'];
+
+/***/ },
+/* 347 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.defaultProps = exports.propTypes = undefined;
+
+	var _react = __webpack_require__(1);
+
+	var string = _react.PropTypes.string;
+	var bool = _react.PropTypes.bool;
+	var number = _react.PropTypes.number;
+	var oneOfType = _react.PropTypes.oneOfType;
+	var shape = _react.PropTypes.shape;
+	var object = _react.PropTypes.object;
+	var func = _react.PropTypes.func;
+	var propTypes = exports.propTypes = {
+	  url: string,
+	  playing: bool,
+	  loop: bool,
+	  controls: bool,
+	  volume: number,
+	  width: oneOfType([string, number]),
+	  height: oneOfType([string, number]),
+	  hidden: bool,
+	  className: string,
+	  style: object,
+	  progressFrequency: number,
+	  soundcloudConfig: shape({
+	    clientId: string,
+	    showArtwork: bool
+	  }),
+	  youtubeConfig: shape({
+	    playerVars: object,
+	    preload: bool
+	  }),
+	  vimeoConfig: shape({
+	    iframeParams: object,
+	    preload: bool
+	  }),
+	  fileConfig: shape({
+	    attributes: object
+	  }),
+	  onReady: func,
+	  onStart: func,
+	  onPlay: func,
+	  onPause: func,
+	  onBuffer: func,
+	  onEnded: func,
+	  onError: func,
+	  onDuration: func,
+	  onProgress: func
+	};
+
+	var defaultProps = exports.defaultProps = {
+	  playing: false,
+	  loop: false,
+	  controls: false,
+	  volume: 0.8,
+	  width: 640,
+	  height: 360,
+	  hidden: false,
+	  progressFrequency: 1000,
+	  soundcloudConfig: {
+	    clientId: 'e8b6f84fbcad14c301ca1355cae1dea2',
+	    showArtwork: true
+	  },
+	  youtubeConfig: {
+	    playerVars: {},
+	    preload: false
+	  },
+	  vimeoConfig: {
+	    iframeParams: {},
+	    preload: false
+	  },
+	  fileConfig: {
+	    attributes: {}
+	  },
+	  onReady: function onReady() {},
+	  onStart: function onStart() {},
+	  onPlay: function onPlay() {},
+	  onPause: function onPause() {},
+	  onBuffer: function onBuffer() {},
+	  onEnded: function onEnded() {},
+	  onError: function onError() {},
+	  onDuration: function onDuration() {},
+	  onProgress: function onProgress() {}
+	};
+
+/***/ },
+/* 348 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _loadScript = __webpack_require__(297);
+
+	var _loadScript2 = _interopRequireDefault(_loadScript);
+
+	var _Base2 = __webpack_require__(349);
+
+	var _Base3 = _interopRequireDefault(_Base2);
+
+	var _utils = __webpack_require__(350);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SDK_URL = 'https://www.youtube.com/iframe_api';
+	var SDK_GLOBAL = 'YT';
+	var SDK_GLOBAL_READY = 'onYouTubeIframeAPIReady';
+	var MATCH_URL = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+	var BLANK_VIDEO_URL = 'https://www.youtube.com/watch?v=GlCmAC4MHek';
+	var DEFAULT_PLAYER_VARS = {
+	  autoplay: 0,
+	  playsinline: 1,
+	  showinfo: 0,
+	  rel: 0,
+	  iv_load_policy: 3
+	};
+
+	var YouTube = function (_Base) {
+	  _inherits(YouTube, _Base);
+
+	  function YouTube() {
+	    var _ref;
+
+	    var _temp, _this, _ret;
+
+	    _classCallCheck(this, YouTube);
+
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = YouTube.__proto__ || Object.getPrototypeOf(YouTube)).call.apply(_ref, [this].concat(args))), _this), _this.onStateChange = function (_ref2) {
+	      var data = _ref2.data;
+	      var _this$props = _this.props;
+	      var onPause = _this$props.onPause;
+	      var onBuffer = _this$props.onBuffer;
+	      var _window$SDK_GLOBAL$Pl = window[SDK_GLOBAL].PlayerState;
+	      var PLAYING = _window$SDK_GLOBAL$Pl.PLAYING;
+	      var PAUSED = _window$SDK_GLOBAL$Pl.PAUSED;
+	      var BUFFERING = _window$SDK_GLOBAL$Pl.BUFFERING;
+	      var ENDED = _window$SDK_GLOBAL$Pl.ENDED;
+	      var CUED = _window$SDK_GLOBAL$Pl.CUED;
+
+	      if (data === PLAYING) _this.onPlay();
+	      if (data === PAUSED) onPause();
+	      if (data === BUFFERING) onBuffer();
+	      if (data === ENDED) _this.onEnded();
+	      if (data === CUED) _this.onReady();
+	    }, _this.onEnded = function () {
+	      var _this$props2 = _this.props;
+	      var loop = _this$props2.loop;
+	      var onEnded = _this$props2.onEnded;
+
+	      if (loop) {
+	        _this.seekTo(0);
+	      }
+	      onEnded();
+	    }, _this.ref = function (container) {
+	      _this.container = container;
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+
+	  _createClass(YouTube, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _props = this.props;
+	      var url = _props.url;
+	      var youtubeConfig = _props.youtubeConfig;
+
+	      if (!url && youtubeConfig.preload) {
+	        this.preloading = true;
+	        this.load(BLANK_VIDEO_URL);
+	      }
+	      _get(YouTube.prototype.__proto__ || Object.getPrototypeOf(YouTube.prototype), 'componentDidMount', this).call(this);
+	    }
+	  }, {
+	    key: 'getSDK',
+	    value: function getSDK() {
+	      if (window[SDK_GLOBAL] && window[SDK_GLOBAL].loaded) {
+	        return Promise.resolve(window[SDK_GLOBAL]);
+	      }
+	      return new Promise(function (resolve, reject) {
+	        var previousOnReady = window[SDK_GLOBAL_READY];
+	        window[SDK_GLOBAL_READY] = function () {
+	          if (previousOnReady) previousOnReady();
+	          resolve(window[SDK_GLOBAL]);
+	        };
+	        (0, _loadScript2['default'])(SDK_URL, function (err) {
+	          if (err) reject(err);
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'load',
+	    value: function load(url) {
+	      var _this2 = this;
+
+	      var _props2 = this.props;
+	      var controls = _props2.controls;
+	      var youtubeConfig = _props2.youtubeConfig;
+	      var _onError = _props2.onError;
+
+	      var id = url && url.match(MATCH_URL)[1];
+	      if (this.isReady) {
+	        this.player.cueVideoById({
+	          videoId: id,
+	          startSeconds: (0, _utils.parseStartTime)(url)
+	        });
+	        return;
+	      }
+	      if (this.loadingSDK) {
+	        this.loadOnReady = url;
+	        return;
+	      }
+	      this.loadingSDK = true;
+	      this.getSDK().then(function (YT) {
+	        _this2.player = new YT.Player(_this2.container, {
+	          width: '100%',
+	          height: '100%',
+	          videoId: id,
+	          playerVars: _extends({}, DEFAULT_PLAYER_VARS, {
+	            controls: controls ? 1 : 0
+	          }, youtubeConfig.playerVars, {
+	            start: (0, _utils.parseStartTime)(url),
+	            origin: window.location.origin
+	          }),
+	          events: {
+	            onReady: function onReady() {
+	              _this2.loadingSDK = false;
+	              _this2.onReady();
+	            },
+	            onStateChange: _this2.onStateChange,
+	            onError: function onError(event) {
+	              return _onError(event.data);
+	            }
+	          }
+	        });
+	      }, _onError);
+	    }
+	  }, {
+	    key: 'play',
+	    value: function play() {
+	      if (!this.isReady || !this.player.playVideo) return;
+	      this.player.playVideo();
+	    }
+	  }, {
+	    key: 'pause',
+	    value: function pause() {
+	      if (!this.isReady || !this.player.pauseVideo) return;
+	      this.player.pauseVideo();
+	    }
+	  }, {
+	    key: 'stop',
+	    value: function stop() {
+	      if (!this.isReady || !this.player.stopVideo) return;
+	      this.player.stopVideo();
+	    }
+	  }, {
+	    key: 'seekTo',
+	    value: function seekTo(fraction) {
+	      _get(YouTube.prototype.__proto__ || Object.getPrototypeOf(YouTube.prototype), 'seekTo', this).call(this, fraction);
+	      if (!this.isReady || !this.player.seekTo) return;
+	      this.player.seekTo(this.getDuration() * fraction);
+	    }
+	  }, {
+	    key: 'setVolume',
+	    value: function setVolume(fraction) {
+	      if (!this.isReady || !this.player.setVolume) return;
+	      this.player.setVolume(fraction * 100);
+	    }
+	  }, {
+	    key: 'getDuration',
+	    value: function getDuration() {
+	      if (!this.isReady || !this.player.getDuration) return null;
+	      return this.player.getDuration();
+	    }
+	  }, {
+	    key: 'getFractionPlayed',
+	    value: function getFractionPlayed() {
+	      if (!this.isReady || !this.getDuration()) return null;
+	      return this.player.getCurrentTime() / this.getDuration();
+	    }
+	  }, {
+	    key: 'getFractionLoaded',
+	    value: function getFractionLoaded() {
+	      if (!this.isReady || !this.player.getVideoLoadedFraction) return null;
+	      return this.player.getVideoLoadedFraction();
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var style = {
+	        height: '100%',
+	        display: this.props.url ? 'block' : 'none'
+	      };
+	      return _react2['default'].createElement(
+	        'div',
+	        { style: style },
+	        _react2['default'].createElement('div', { ref: this.ref })
+	      );
+	    }
+	  }], [{
+	    key: 'canPlay',
+	    value: function canPlay(url) {
+	      return MATCH_URL.test(url);
+	    }
+	  }]);
+
+	  return YouTube;
+	}(_Base3['default']);
+
+	YouTube.displayName = 'YouTube';
+	exports['default'] = YouTube;
+	module.exports = exports['default'];
+
+/***/ },
+/* 349 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _props2 = __webpack_require__(347);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SEEK_ON_PLAY_EXPIRY = 5000;
+
+	var Base = function (_Component) {
+	  _inherits(Base, _Component);
+
+	  function Base() {
+	    var _ref;
+
+	    var _temp, _this, _ret;
+
+	    _classCallCheck(this, Base);
+
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Base.__proto__ || Object.getPrototypeOf(Base)).call.apply(_ref, [this].concat(args))), _this), _this.isReady = false, _this.startOnPlay = true, _this.durationOnPlay = false, _this.seekOnPlay = null, _this.onPlay = function () {
+	      var _this$props = _this.props;
+	      var volume = _this$props.volume;
+	      var onStart = _this$props.onStart;
+	      var onPlay = _this$props.onPlay;
+	      var onDuration = _this$props.onDuration;
+
+	      if (_this.startOnPlay) {
+	        _this.setVolume(volume);
+	        onStart();
+	        _this.startOnPlay = false;
+	      }
+	      onPlay();
+	      if (_this.seekOnPlay) {
+	        _this.seekTo(_this.seekOnPlay);
+	        _this.seekOnPlay = null;
+	      }
+	      if (_this.durationOnPlay) {
+	        onDuration(_this.getDuration());
+	        _this.durationOnPlay = false;
+	      }
+	    }, _this.onReady = function () {
+	      var _this$props2 = _this.props;
+	      var onReady = _this$props2.onReady;
+	      var playing = _this$props2.playing;
+	      var onDuration = _this$props2.onDuration;
+
+	      _this.isReady = true;
+	      onReady();
+	      if (playing || _this.preloading) {
+	        _this.preloading = false;
+	        if (_this.loadOnReady) {
+	          _this.load(_this.loadOnReady);
+	          _this.loadOnReady = null;
+	        } else {
+	          _this.play();
+	        }
+	      }
+	      var duration = _this.getDuration();
+	      if (duration) {
+	        onDuration(duration);
+	      } else {
+	        _this.durationOnPlay = true;
+	      }
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+
+	  _createClass(Base, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var url = this.props.url;
+
+	      this.mounted = true;
+	      if (url) {
+	        this.load(url);
+	      }
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.stop();
+	      this.mounted = false;
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      var _props = this.props;
+	      var url = _props.url;
+	      var playing = _props.playing;
+	      var volume = _props.volume;
+	      // Invoke player methods based on incoming props
+
+	      if (url !== nextProps.url && nextProps.url) {
+	        this.seekOnPlay = null;
+	        this.startOnPlay = true;
+	        this.load(nextProps.url);
+	      } else if (url && !nextProps.url) {
+	        this.stop();
+	        clearTimeout(this.updateTimeout);
+	      } else if (!playing && nextProps.playing) {
+	        this.play();
+	      } else if (playing && !nextProps.playing) {
+	        this.pause();
+	      } else if (volume !== nextProps.volume) {
+	        this.setVolume(nextProps.volume);
+	      }
+	    }
+	  }, {
+	    key: 'shouldComponentUpdate',
+	    value: function shouldComponentUpdate(nextProps) {
+	      return this.props.url !== nextProps.url;
+	    }
+	  }, {
+	    key: 'seekTo',
+	    value: function seekTo(fraction) {
+	      var _this2 = this;
+
+	      // When seeking before player is ready, store value and seek later
+	      if (!this.isReady && fraction !== 0) {
+	        this.seekOnPlay = fraction;
+	        setTimeout(function () {
+	          _this2.seekOnPlay = null;
+	        }, SEEK_ON_PLAY_EXPIRY);
+	      }
+	    }
+	  }]);
+
+	  return Base;
+	}(_react.Component);
+
+	Base.propTypes = _props2.propTypes;
+	Base.defaultProps = _props2.defaultProps;
+	exports['default'] = Base;
+	module.exports = exports['default'];
+
+/***/ },
+/* 350 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.parseStartTime = parseStartTime;
+	var MATCH_START_QUERY = /[\?&#](?:start|t)=([0-9hms]+)/;
+	var MATCH_START_STAMP = /(\d+)(h|m|s)/g;
+	var MATCH_NUMERIC = /^\d+$/;
+
+	// Parse YouTube URL for a start time param, ie ?t=1h14m30s
+	// and return the start time in seconds
+	function parseStartTime(url) {
+	  var match = url.match(MATCH_START_QUERY);
+	  if (match) {
+	    var stamp = match[1];
+	    if (stamp.match(MATCH_START_STAMP)) {
+	      return parseStartStamp(stamp);
+	    }
+	    if (MATCH_NUMERIC.test(stamp)) {
+	      return parseInt(stamp, 10);
+	    }
+	  }
+	  return 0;
+	}
+
+	function parseStartStamp(stamp) {
+	  var seconds = 0;
+	  var array = MATCH_START_STAMP.exec(stamp);
+	  while (array !== null) {
+	    var _array = array;
+
+	    var _array2 = _slicedToArray(_array, 3);
+
+	    var count = _array2[1];
+	    var period = _array2[2];
+
+	    if (period === 'h') seconds += parseInt(count, 10) * 60 * 60;
+	    if (period === 'm') seconds += parseInt(count, 10) * 60;
+	    if (period === 's') seconds += parseInt(count, 10);
+	    array = MATCH_START_STAMP.exec(stamp);
+	  }
+	  return seconds;
+	}
+
+/***/ },
+/* 351 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _fetchJsonp = __webpack_require__(352);
+
+	var _fetchJsonp2 = _interopRequireDefault(_fetchJsonp);
+
+	var _FilePlayer2 = __webpack_require__(353);
+
+	var _FilePlayer3 = _interopRequireDefault(_FilePlayer2);
+
+	var _props3 = __webpack_require__(347);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RESOLVE_URL = '//api.soundcloud.com/resolve.json';
+	var MATCH_URL = /^https?:\/\/(soundcloud.com|snd.sc)\/([a-z0-9-_]+\/[a-z0-9-_]+)$/;
+
+	var songData = {}; // Cache song data requests
+
+	var SoundCloud = function (_FilePlayer) {
+	  _inherits(SoundCloud, _FilePlayer);
+
+	  function SoundCloud() {
+	    var _ref;
+
+	    var _temp, _this, _ret;
+
+	    _classCallCheck(this, SoundCloud);
+
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = SoundCloud.__proto__ || Object.getPrototypeOf(SoundCloud)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+	      image: null
+	    }, _this.clientId = _this.props.soundcloudConfig.clientId || _props3.defaultProps.soundcloudConfig.clientId, _this.ref = function (player) {
+	      _this.player = player;
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+
+	  _createClass(SoundCloud, [{
+	    key: 'shouldComponentUpdate',
+	    value: function shouldComponentUpdate(nextProps, nextState) {
+	      return _get(SoundCloud.prototype.__proto__ || Object.getPrototypeOf(SoundCloud.prototype), 'shouldComponentUpdate', this).call(this, nextProps, nextState) || this.state.image !== nextState.image;
+	    }
+	  }, {
+	    key: 'getSongData',
+	    value: function getSongData(url) {
+	      var _this2 = this;
+
+	      if (songData[url]) {
+	        return Promise.resolve(songData[url]);
+	      }
+	      return (0, _fetchJsonp2['default'])(RESOLVE_URL + '?url=' + url + '&client_id=' + this.clientId).then(function (response) {
+	        if (response.ok) {
+	          songData[url] = response.json();
+	          return songData[url];
+	        } else {
+	          _this2.props.onError(new Error('SoundCloud track could not be resolved'));
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'load',
+	    value: function load(url) {
+	      var _this3 = this;
+
+	      var _props = this.props;
+	      var soundcloudConfig = _props.soundcloudConfig;
+	      var onError = _props.onError;
+
+	      this.stop();
+	      this.getSongData(url).then(function (data) {
+	        if (!_this3.mounted) return;
+	        if (!data.streamable) {
+	          onError(new Error('SoundCloud track is not streamable'));
+	          return;
+	        }
+	        var image = data.artwork_url || data.user.avatar_url;
+	        if (image && soundcloudConfig.showArtwork) {
+	          _this3.setState({ image: image.replace('-large', '-t500x500') });
+	        }
+	        _this3.player.src = data.stream_url + '?client_id=' + _this3.clientId;
+	      }, onError);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props2 = this.props;
+	      var url = _props2.url;
+	      var loop = _props2.loop;
+	      var controls = _props2.controls;
+
+	      var style = {
+	        display: url ? 'block' : 'none',
+	        height: '100%',
+	        backgroundImage: this.state.image ? 'url(' + this.state.image + ')' : null,
+	        backgroundSize: 'cover',
+	        backgroundPosition: 'center'
+	      };
+	      return _react2['default'].createElement(
+	        'div',
+	        { style: style },
+	        _react2['default'].createElement('audio', {
+	          ref: this.ref,
+	          type: 'audio/mpeg',
+	          preload: 'auto',
+	          style: {
+	            width: '100%',
+	            height: '100%'
+	          },
+	          controls: controls,
+	          loop: loop
+	        })
+	      );
+	    }
+	  }], [{
+	    key: 'canPlay',
+	    value: function canPlay(url) {
+	      return MATCH_URL.test(url);
+	    }
+	  }]);
+
+	  return SoundCloud;
+	}(_FilePlayer3['default']);
+
+	SoundCloud.displayName = 'SoundCloud';
+	exports['default'] = SoundCloud;
+	module.exports = exports['default'];
+
+/***/ },
+/* 352 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, module], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+	    factory(exports, module);
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod.exports, mod);
+	    global.fetchJsonp = mod.exports;
+	  }
+	})(this, function (exports, module) {
+	  'use strict';
+
+	  var defaultOptions = {
+	    timeout: 5000,
+	    jsonpCallback: 'callback',
+	    jsonpCallbackFunction: null
+	  };
+
+	  function generateCallbackFunction() {
+	    return 'jsonp_' + Date.now() + '_' + Math.ceil(Math.random() * 100000);
+	  }
+
+	  // Known issue: Will throw 'Uncaught ReferenceError: callback_*** is not defined'
+	  // error if request timeout
+	  function clearFunction(functionName) {
+	    // IE8 throws an exception when you try to delete a property on window
+	    // http://stackoverflow.com/a/1824228/751089
+	    try {
+	      delete window[functionName];
+	    } catch (e) {
+	      window[functionName] = undefined;
+	    }
+	  }
+
+	  function removeScript(scriptId) {
+	    var script = document.getElementById(scriptId);
+	    document.getElementsByTagName('head')[0].removeChild(script);
+	  }
+
+	  function fetchJsonp(_url) {
+	    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	    // to avoid param reassign
+	    var url = _url;
+	    var timeout = options.timeout || defaultOptions.timeout;
+	    var jsonpCallback = options.jsonpCallback || defaultOptions.jsonpCallback;
+
+	    var timeoutId = undefined;
+
+	    return new Promise(function (resolve, reject) {
+	      var callbackFunction = options.jsonpCallbackFunction || generateCallbackFunction();
+	      var scriptId = jsonpCallback + '_' + callbackFunction;
+
+	      window[callbackFunction] = function (response) {
+	        resolve({
+	          ok: true,
+	          // keep consistent with fetch API
+	          json: function json() {
+	            return Promise.resolve(response);
+	          }
+	        });
+
+	        if (timeoutId) clearTimeout(timeoutId);
+
+	        removeScript(scriptId);
+
+	        clearFunction(callbackFunction);
+	      };
+
+	      // Check if the user set their own params, and if not add a ? to start a list of params
+	      url += url.indexOf('?') === -1 ? '?' : '&';
+
+	      var jsonpScript = document.createElement('script');
+	      jsonpScript.setAttribute('src', '' + url + jsonpCallback + '=' + callbackFunction);
+	      jsonpScript.id = scriptId;
+	      document.getElementsByTagName('head')[0].appendChild(jsonpScript);
+
+	      timeoutId = setTimeout(function () {
+	        reject(new Error('JSONP request to ' + url + ' timed out'));
+
+	        clearFunction(callbackFunction);
+	        removeScript(scriptId);
+	      }, timeout);
+	    });
+	  }
+
+	  // export as global function
+	  /*
+	  let local;
+	  if (typeof global !== 'undefined') {
+	    local = global;
+	  } else if (typeof self !== 'undefined') {
+	    local = self;
+	  } else {
+	    try {
+	      local = Function('return this')();
+	    } catch (e) {
+	      throw new Error('polyfill failed because global object is unavailable in this environment');
+	    }
+	  }
+	  local.fetchJsonp = fetchJsonp;
+	  */
+
+	  module.exports = fetchJsonp;
+	});
+
+/***/ },
+/* 353 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Base2 = __webpack_require__(349);
+
+	var _Base3 = _interopRequireDefault(_Base2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var AUDIO_EXTENSIONS = /\.(mp3|wav|m4a)($|\?)/i;
+
+	var FilePlayer = function (_Base) {
+	  _inherits(FilePlayer, _Base);
+
+	  function FilePlayer() {
+	    var _ref;
+
+	    var _temp, _this, _ret;
+
+	    _classCallCheck(this, FilePlayer);
+
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = FilePlayer.__proto__ || Object.getPrototypeOf(FilePlayer)).call.apply(_ref, [this].concat(args))), _this), _this.ref = function (player) {
+	      _this.player = player;
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+
+	  _createClass(FilePlayer, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
+
+	      var _props = this.props;
+	      var onPause = _props.onPause;
+	      var onEnded = _props.onEnded;
+	      var onError = _props.onError;
+
+	      this.player.addEventListener('canplay', this.onReady);
+	      this.player.addEventListener('play', this.onPlay);
+	      this.player.addEventListener('pause', function () {
+	        if (_this2.mounted) {
+	          onPause();
+	        }
+	      });
+	      this.player.addEventListener('ended', onEnded);
+	      this.player.addEventListener('error', onError);
+	      this.player.setAttribute('webkit-playsinline', '');
+	      _get(FilePlayer.prototype.__proto__ || Object.getPrototypeOf(FilePlayer.prototype), 'componentDidMount', this).call(this);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      var _props2 = this.props;
+	      var onPause = _props2.onPause;
+	      var onEnded = _props2.onEnded;
+	      var onError = _props2.onError;
+
+	      this.player.removeEventListener('canplay', this.onReady);
+	      this.player.removeEventListener('play', this.onPlay);
+	      this.player.removeEventListener('pause', onPause);
+	      this.player.removeEventListener('ended', onEnded);
+	      this.player.removeEventListener('error', onError);
+	      _get(FilePlayer.prototype.__proto__ || Object.getPrototypeOf(FilePlayer.prototype), 'componentWillUnmount', this).call(this);
+	    }
+	  }, {
+	    key: 'load',
+	    value: function load(url) {
+	      this.player.src = url;
+	    }
+	  }, {
+	    key: 'play',
+	    value: function play() {
+	      this.player.play();
+	    }
+	  }, {
+	    key: 'pause',
+	    value: function pause() {
+	      this.player.pause();
+	    }
+	  }, {
+	    key: 'stop',
+	    value: function stop() {
+	      this.player.removeAttribute('src');
+	    }
+	  }, {
+	    key: 'seekTo',
+	    value: function seekTo(fraction) {
+	      _get(FilePlayer.prototype.__proto__ || Object.getPrototypeOf(FilePlayer.prototype), 'seekTo', this).call(this, fraction);
+	      this.player.currentTime = this.getDuration() * fraction;
+	    }
+	  }, {
+	    key: 'setVolume',
+	    value: function setVolume(fraction) {
+	      this.player.volume = fraction;
+	    }
+	  }, {
+	    key: 'getDuration',
+	    value: function getDuration() {
+	      if (!this.isReady) return null;
+	      return this.player.duration;
+	    }
+	  }, {
+	    key: 'getFractionPlayed',
+	    value: function getFractionPlayed() {
+	      if (!this.isReady) return null;
+	      return this.player.currentTime / this.getDuration();
+	    }
+	  }, {
+	    key: 'getFractionLoaded',
+	    value: function getFractionLoaded() {
+	      if (!this.isReady || this.player.buffered.length === 0) return null;
+	      return this.player.buffered.end(0) / this.getDuration();
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props3 = this.props;
+	      var url = _props3.url;
+	      var loop = _props3.loop;
+	      var controls = _props3.controls;
+	      var fileConfig = _props3.fileConfig;
+
+	      var Media = AUDIO_EXTENSIONS.test(url) ? 'audio' : 'video';
+	      var style = {
+	        width: '100%',
+	        height: '100%',
+	        display: url ? 'block' : 'none'
+	      };
+	      return _react2['default'].createElement(Media, _extends({
+	        ref: this.ref,
+	        style: style,
+	        preload: 'auto',
+	        controls: controls,
+	        loop: loop
+	      }, fileConfig.attributes));
+	    }
+	  }], [{
+	    key: 'canPlay',
+	    value: function canPlay(url) {
+	      return true;
+	    }
+	  }]);
+
+	  return FilePlayer;
+	}(_Base3['default']);
+
+	FilePlayer.displayName = 'FilePlayer';
+	exports['default'] = FilePlayer;
+	module.exports = exports['default'];
+
+/***/ },
+/* 354 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _queryString = __webpack_require__(206);
+
+	var _Base2 = __webpack_require__(349);
+
+	var _Base3 = _interopRequireDefault(_Base2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var IFRAME_SRC = 'https://player.vimeo.com/video/';
+	var MATCH_URL = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
+	var MATCH_MESSAGE_ORIGIN = /^https?:\/\/player.vimeo.com/;
+	var BLANK_VIDEO_URL = 'https://vimeo.com/127250231';
+	var DEFAULT_IFRAME_PARAMS = {
+	  api: 1,
+	  autoplay: 0,
+	  badge: 0,
+	  byline: 0,
+	  fullscreen: 1,
+	  portrait: 0,
+	  title: 0
+	};
+
+	var Vimeo = function (_Base) {
+	  _inherits(Vimeo, _Base);
+
+	  function Vimeo() {
+	    var _ref;
+
+	    var _temp, _this, _ret;
+
+	    _classCallCheck(this, Vimeo);
+
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Vimeo.__proto__ || Object.getPrototypeOf(Vimeo)).call.apply(_ref, [this].concat(args))), _this), _this.onMessage = function (e) {
+	      if (!MATCH_MESSAGE_ORIGIN.test(e.origin)) return;
+	      _this.origin = _this.origin || e.origin;
+	      var data = JSON.parse(e.data);
+	      if (data.event === 'ready') {
+	        _this.postMessage('getDuration');
+	        _this.postMessage('addEventListener', 'playProgress');
+	        _this.postMessage('addEventListener', 'loadProgress');
+	        _this.postMessage('addEventListener', 'play');
+	        _this.postMessage('addEventListener', 'pause');
+	        _this.postMessage('addEventListener', 'finish');
+	      }
+	      if (data.event === 'playProgress') _this.fractionPlayed = data.data.percent;
+	      if (data.event === 'loadProgress') _this.fractionLoaded = data.data.percent;
+	      if (data.event === 'play') _this.onPlay();
+	      if (data.event === 'pause') _this.props.onPause();
+	      if (data.event === 'finish') _this.onEnded();
+	      if (data.method === 'getDuration') {
+	        _this.duration = data.value; // Store for use later
+	        _this.onReady();
+	      }
+	    }, _this.onEnded = function () {
+	      var _this$props = _this.props;
+	      var loop = _this$props.loop;
+	      var onEnded = _this$props.onEnded;
+
+	      if (loop) {
+	        _this.seekTo(0);
+	      }
+	      onEnded();
+	    }, _this.postMessage = function (method, value) {
+	      if (!_this.origin) return;
+	      var data = JSON.stringify({ method: method, value: value });
+	      return _this.iframe.contentWindow && _this.iframe.contentWindow.postMessage(data, _this.origin);
+	    }, _this.ref = function (iframe) {
+	      _this.iframe = iframe;
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+
+	  _createClass(Vimeo, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _props = this.props;
+	      var url = _props.url;
+	      var vimeoConfig = _props.vimeoConfig;
+
+	      window.addEventListener('message', this.onMessage, false);
+
+	      if (!url && vimeoConfig.preload) {
+	        this.preloading = true;
+	        this.load(BLANK_VIDEO_URL);
+	      }
+
+	      _get(Vimeo.prototype.__proto__ || Object.getPrototypeOf(Vimeo.prototype), 'componentDidMount', this).call(this);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      window.removeEventListener('message', this.onMessage, false);
+	      _get(Vimeo.prototype.__proto__ || Object.getPrototypeOf(Vimeo.prototype), 'componentWillUnmount', this).call(this);
+	    }
+	  }, {
+	    key: 'getIframeParams',
+	    value: function getIframeParams() {
+	      return _extends({}, DEFAULT_IFRAME_PARAMS, this.props.vimeoConfig.iframeParams);
+	    }
+	  }, {
+	    key: 'load',
+	    value: function load(url) {
+	      var id = url.match(MATCH_URL)[3];
+	      this.iframe.src = IFRAME_SRC + id + '?' + (0, _queryString.stringify)(this.getIframeParams());
+	    }
+	  }, {
+	    key: 'play',
+	    value: function play() {
+	      this.postMessage('play');
+	    }
+	  }, {
+	    key: 'pause',
+	    value: function pause() {
+	      this.postMessage('pause');
+	    }
+	  }, {
+	    key: 'stop',
+	    value: function stop() {
+	      this.iframe.src = '';
+	    }
+	  }, {
+	    key: 'seekTo',
+	    value: function seekTo(fraction) {
+	      _get(Vimeo.prototype.__proto__ || Object.getPrototypeOf(Vimeo.prototype), 'seekTo', this).call(this, fraction);
+	      this.postMessage('seekTo', this.duration * fraction);
+	    }
+	  }, {
+	    key: 'setVolume',
+	    value: function setVolume(fraction) {
+	      this.postMessage('setVolume', fraction);
+	    }
+	  }, {
+	    key: 'getDuration',
+	    value: function getDuration() {
+	      return this.duration;
+	    }
+	  }, {
+	    key: 'getFractionPlayed',
+	    value: function getFractionPlayed() {
+	      return this.fractionPlayed || null;
+	    }
+	  }, {
+	    key: 'getFractionLoaded',
+	    value: function getFractionLoaded() {
+	      return this.fractionLoaded || null;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _getIframeParams = this.getIframeParams();
+
+	      var fullscreen = _getIframeParams.fullscreen;
+
+	      var style = {
+	        display: this.props.url ? 'block' : 'none',
+	        width: '100%',
+	        height: '100%'
+	      };
+	      return _react2['default'].createElement('iframe', {
+	        ref: this.ref,
+	        frameBorder: '0',
+	        style: style,
+	        allowFullScreen: fullscreen
+	      });
+	    }
+	  }], [{
+	    key: 'canPlay',
+	    value: function canPlay(url) {
+	      return MATCH_URL.test(url);
+	    }
+	  }]);
+
+	  return Vimeo;
+	}(_Base3['default']);
+
+	Vimeo.displayName = 'Vimeo';
+	exports['default'] = Vimeo;
+	module.exports = exports['default'];
+
+/***/ },
+/* 355 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _FilePlayer2 = __webpack_require__(353);
+
+	var _FilePlayer3 = _interopRequireDefault(_FilePlayer2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RESOLVE_URL = 'https://api.streamable.com/videos/';
+	var MATCH_URL = /^https?:\/\/streamable.com\/([a-z0-9]+)$/;
+
+	var cache = {}; // Cache song data requests
+
+	var Streamable = function (_FilePlayer) {
+	  _inherits(Streamable, _FilePlayer);
+
+	  function Streamable() {
+	    _classCallCheck(this, Streamable);
+
+	    return _possibleConstructorReturn(this, (Streamable.__proto__ || Object.getPrototypeOf(Streamable)).apply(this, arguments));
+	  }
+
+	  _createClass(Streamable, [{
+	    key: 'getData',
+	    value: function getData(url) {
+	      var onError = this.props.onError;
+
+	      var id = url.match(MATCH_URL)[1];
+	      if (cache[id]) {
+	        return Promise.resolve(cache[id]);
+	      }
+	      return window.fetch(RESOLVE_URL + id).then(function (response) {
+	        if (response.status === 200) {
+	          cache[id] = response.json();
+	          return cache[id];
+	        } else {
+	          onError(new Error('Streamable track could not be resolved'));
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'load',
+	    value: function load(url) {
+	      var _this2 = this;
+
+	      var onError = this.props.onError;
+
+	      this.stop();
+	      this.getData(url).then(function (data) {
+	        if (!_this2.mounted) return;
+	        _this2.player.src = data.files.mp4.url;
+	      }, onError);
+	    }
+	  }], [{
+	    key: 'canPlay',
+	    value: function canPlay(url) {
+	      return MATCH_URL.test(url);
+	    }
+	  }]);
+
+	  return Streamable;
+	}(_FilePlayer3['default']);
+
+	Streamable.displayName = 'Streamable';
+	exports['default'] = Streamable;
+	module.exports = exports['default'];
+
+/***/ },
+/* 356 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _FilePlayer2 = __webpack_require__(353);
+
+	var _FilePlayer3 = _interopRequireDefault(_FilePlayer2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RESOLVE_URL = 'https://api.vid.me/videoByUrl/';
+	var MATCH_URL = /^https?:\/\/vid.me\/([a-z0-9]+)$/;
+
+	var cache = {}; // Cache song data requests
+
+	var Vidme = function (_FilePlayer) {
+	  _inherits(Vidme, _FilePlayer);
+
+	  function Vidme() {
+	    _classCallCheck(this, Vidme);
+
+	    return _possibleConstructorReturn(this, (Vidme.__proto__ || Object.getPrototypeOf(Vidme)).apply(this, arguments));
+	  }
+
+	  _createClass(Vidme, [{
+	    key: 'getData',
+	    value: function getData(url) {
+	      var onError = this.props.onError;
+
+	      var id = url.match(MATCH_URL)[1];
+	      if (cache[id]) {
+	        return Promise.resolve(cache[id]);
+	      }
+	      return window.fetch(RESOLVE_URL + id).then(function (response) {
+	        if (response.status === 200) {
+	          cache[id] = response.json();
+	          return cache[id];
+	        } else {
+	          onError(new Error('Vidme track could not be resolved'));
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'load',
+	    value: function load(url) {
+	      var _this2 = this;
+
+	      var onError = this.props.onError;
+
+	      this.stop();
+	      this.getData(url).then(function (data) {
+	        if (!_this2.mounted) return;
+	        _this2.player.src = data.video.complete_url;
+	      }, onError);
+	    }
+	  }], [{
+	    key: 'canPlay',
+	    value: function canPlay(url) {
+	      return MATCH_URL.test(url);
+	    }
+	  }]);
+
+	  return Vidme;
+	}(_FilePlayer3['default']);
+
+	Vidme.displayName = 'Vidme';
+	exports['default'] = Vidme;
+	module.exports = exports['default'];
+
+/***/ },
+/* 357 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(358);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(360)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./stylesheet.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./stylesheet.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 358 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(359)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "   html {\n      margin: 0;\n      padding: 0;\n      border: 0;\n    }\n    body {\n      font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;\n      line-height: 1.4em;\n      background: #f5f5f5;\n      color: #4d4d4d;\n      min-width: 230px;\n      max-width: 550px;\n      margin: 0 auto;\n      -webkit-font-smoothing: antialiased;\n      font-weight: 300;\n    }\n    h1 {\n      display: block;\n      margin: 50 auto;\n      width: 600px;\n      font-size: 30px;\n    }\n    #Qtube {\n      display: block;\n      margin: 0 auto;\n      width: 250px;\n      margin-top: 100px;\n      font-size: 80px;\n    }\n    #youtube-component {\n      width: 600px;\n      margin: 50px auto;\n      display: block;\n    }\n    .youtube-wrapper {\n      margin: auto;\n      left: 0;\n      right: 0;\n    }\nbutton {\n   border-top: 1px solid #f7979f;\n   background: #ff0000;\n   background: -webkit-gradient(linear, left top, left bottom, from(#9c3e3e), to(#ff0000));\n   background: -webkit-linear-gradient(top, #9c3e3e, #ff0000);\n   background: -moz-linear-gradient(top, #9c3e3e, #ff0000);\n   background: -ms-linear-gradient(top, #9c3e3e, #ff0000);\n   background: -o-linear-gradient(top, #9c3e3e, #ff0000);\n   padding: 14px 28px;\n   -webkit-border-radius: 11px;\n   -moz-border-radius: 11px;\n   border-radius: 11px;\n   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;\n   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;\n   box-shadow: rgba(0,0,0,1) 0 1px 0;\n   text-shadow: rgba(0,0,0,.4) 0 1px 0;\n   color: white;\n   font-size: 24px;\n   font-family: Georgia, Serif;\n   text-decoration: none;\n   vertical-align: middle;\n   margin: 0 auto;\n   width: 300px;\n   display: block;\n   }\nbutton:hover {\n   border-top-color: #f7000c;\n   background: #f7000c;\n   color: #ffffff;\n   }\nbutton:active {\n   border-top-color: #ff0000;\n   background: #ff0000;\n   }\n   input {\n     outline: none;\n     display: block;\n     margin: 0 auto;\n     width: 300px;\n     height: 50px;\n     font-size: 40px;\n     border: 1px solid #d0d0d0;\n     border-radius: 5px;\n   }\n   #roomToCreate, #roomToJoin {\n     margin-top: 100px;\n   }\n   #create-room, #join-room {\n     margin-top: 10px;\n   }", ""]);
+
+	// exports
+
+
+/***/ },
+/* 359 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 360 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
 
 /***/ }
 /******/ ]);
