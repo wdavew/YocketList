@@ -42,16 +42,20 @@ class QueueApp extends Component {
   /**
    * TODO: get access to url that the admin wants to remove
    */
-  handlePlayerEnd(event) {
 
+  
+  handlePlayerEnd(event) {
+    console.log('local storage', (localStorage.getItem(`admin${this.props.params.roomName}`)));
     if (localStorage.getItem(`admin${this.props.params.roomName}`)) {
       $.ajax({
         type: "GET",
         url: HOST + `/getNextVideo/${this.props.params.roomName}`,
         contentType: "application/json; charset=utf-8",
-      }).done(response => setState({ video: response }));
+      }).done((response) => {
+        this.setState({ video: response });
+        this.socket.emit('refreshQueue', {room: this.props.params.roomName});
+    });
     }
-
   }
   /**
    * This is the callback for the form component to use in onClick.
@@ -59,9 +63,9 @@ class QueueApp extends Component {
    */
   formClick(link) {
     // TODO this functionality should be replaced with socket logic.
-    let newQueues = [...this.state.queues];
-    newQueues.push(link);
-    this.setState({ queues: newQueues });
+    // let newQueues = [...this.state.queues];
+    // newQueues.push(link);
+    // this.setState({ queues: newQueues });
     $.ajax({
       url: HOST + '/addToQueue',
       type: "POST",
@@ -87,7 +91,10 @@ class QueueApp extends Component {
 
   render() {
     let videoUrl;
-    if (this.state.queues.length) videoUrl = this.state.queues[0].split('=')[1];
+    if (this.state.video) {
+      videoUrl = this.state.video;
+      console.log(videoUrl);
+    }
 
     return (
       <div className="youtube-wrapper">

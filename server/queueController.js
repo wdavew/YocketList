@@ -56,7 +56,7 @@ const queueController = {
     },
 
     getNextVideo: (req, res) => {
-        redisController.returnVideo(req.params.roomName)
+        redisController.returnVideo(req.params.room)
             .then(resp => res.status(200).json(resp))
             .catch(() => res.status(400).send('error in getting next video'));
     }
