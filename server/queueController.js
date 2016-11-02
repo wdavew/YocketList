@@ -12,6 +12,7 @@ const queueController = {
         console.log('getting data for ', req.params.room);
         redisController.returnQueue(req.params.room)
             .then(data => {
+                console.log(data);
                 return res.status(200).json(data)
             });
     },
@@ -32,6 +33,12 @@ const queueController = {
                     .catch(() => res.status(400).send('the requeusted video is already queued'));
             })
     },
+
+    vote: (req, res, next) => {
+        redisController.incScore(req.body.link, req.body.room)
+        .then(resp => res.json(resp));
+    },
+
 
     removeFromQueue: (req, res, next) => {
         if (!req.body.link) return res.status(400).send("no link supplied")
