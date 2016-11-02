@@ -1,13 +1,14 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var bodyparser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var SocketPage = require('./room.js');
-var redisController = require('./redis.js').red;
+var redisController = require('./redisController.js').red;
 
 const queueController = require('./queueController.js')
-
+app.use(express.static(__dirname + '../client/stylesheets'));
 
 /* Database */
 const qArray = [];
