@@ -8,30 +8,27 @@ class Home extends Component {
   constructor() {
     super();
     this.socket = io.connect(HOST);
-    
-    this.createRoom = this.createRoom.bind(this);
-    this.joinRoom = this.joinRoom.bind(this);
   }
   
-  createRoom(clickEvent) {
+  createRoom = (clickEvent) => {
     clickEvent.preventDefault();
     const form = document.forms.createRoom;
     const roomName = form.roomToCreate.value;
+    
     $.ajax({
       type: "POST",
       url: HOST + "/createRoom",
       data: JSON.stringify({ roomName }),
       contentType: "application/json; charset=utf-8",
-    })
-      .done(() => {
-        localStorage.setItem(`admin${roomName}`, 'true')
-        browserHistory.push(`/queue/${roomName}`)
-      })
-      .fail(() => alert('room name taken'));
+    }).done(() => {
+      localStorage.setItem(`admin${roomName}`, 'true')
+      browserHistory.push(`/queue/${roomName}`)
+    }).fail(() => alert('room name taken'));
+    
     form.roomToCreate.value = '';
   }
 
-  joinRoom(clickEvent) {
+  joinRoom = (clickEvent) => {
     clickEvent.preventDefault();
     const form = document.forms.joinRoom;
     const roomName = form.roomToJoin.value;
