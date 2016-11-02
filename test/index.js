@@ -5,6 +5,6 @@ require('babel-register')({
 });
 
 require('./js/enzyme.js');
-require('./js/redis');
-require('./js/socketio');
-require('./js/supertest');
+// require('./js/redis');
+// require('./js/socketio');
+// require('./js/supertest');
