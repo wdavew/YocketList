@@ -13,21 +13,77 @@ class QueueApp extends Component {
     super(props);
     this.state = {
       queues: [],
-      video: ''
+      video: '',
+      playing: true,
+      startPosition: 0,
+      played: 0,
     }
     this.socket = io.connect(HOST);
-    this.admin = this.userIsAdmin();
     this.getData = this.getData.bind(this);
     this.formClick = this.formClick.bind(this);
-    this.handleStateChange = this.handleStateChange.bind(this);
     this.handlePlayerEnd = this.handlePlayerEnd.bind(this);
+    this.adminOnPause = this.adminOnPause.bind(this);
+    this.adminOnPlay = this.adminOnPlay.bind(this);
+    this.adminSendVid = this.adminSendVid.bind(this);
+    this.setCurrentVideo = this.setCurrentVideo.bind(this);
+    this.pauseVideo = this.pauseVideo.bind(this);
+    this.playVideo = this.playVideo.bind(this);
+    this.onProgress = this.onProgress.bind(this);
+    this.syncWithAdmin = this.syncWithAdmin.bind(this);
   }
   /**
    * We GET our data here after each render
    */
 
+  onProgress({played}) {
+    const position = parseFloat(played)
+    this.setState({played: position});
+    console.log(this.state.played);
+  }
+
+
   userIsAdmin() {
-    return localStorage.getItem(`admin${this.props.params.roomName}`)
+    return Boolean(localStorage.getItem(`admin${this.props.params.roomName}`))
+  }
+
+  setCurrentVideo({url, start}) {
+      console.log('received url', url);
+      this.setState({video: url, startPosition: start})
+    }
+
+ adminSendVid() {
+    console.log('adminsendvid');
+    console.log(this.admin);
+    if (this.admin) {
+      console.log('sending vid url to new user');
+      this.socket.emit('currentVideo',  { 
+        room: this.props.params.roomName, 
+        url: this.state.video, 
+        start: this.state.played
+      })
+    }
+  }
+
+  adminOnPlay() {
+    if (this.admin) {
+      this.socket.emit('adminPlay',  { room: this.props.params.roomName })
+    }
+  }
+
+  adminOnPause() {
+    if (this.admin) {
+      this.socket.emit('adminPause',  { room: this.props.params.roomName })
+    }
+  }
+
+  playVideo()  { 
+    console.log('playing video');
+    this.setState({playing: true});
+  }
+
+  pauseVideo() {
+    console.log('pausing');
+    this.setState({playing: false});
   }
 
   getData() {
@@ -37,7 +93,8 @@ class QueueApp extends Component {
           url: HOST + `/getNextVideo/${this.props.params.roomName}`,
           contentType: "application/json; charset=utf-8",
         }).done((response) => {
-          this.setState({ video: response.split('=')[1] });
+          this.setState({ video: response });
+          this.adminSendVid()
           this.socket.emit('refreshQueue', { room: this.props.params.roomName });
         })
       } else {
@@ -45,18 +102,8 @@ class QueueApp extends Component {
     }
   }
 
-/**
-* handleStateChange is an event listener for the react-youtube
-* component's state. The states are as follows:
-* UNSTARTED: -1, ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3, CUED: 5
-*/
-handleStateChange(event) {
-  // CUED was a good option for enabling "auto play" because it waits
-  // until the player is loaded (-1) and then the video is cued ready to play.
-  // ENDED allows repeat behavior for last video.
-  if (event.data === 5) event.target.playVideo();
-  if (event.data === 2 && this.admin) this.socket.emit('pauseVideo')
-  if (event.data === 1 && this.admin) this.socket.emit('playVideo')
+syncWithAdmin() {
+  if (!this.admin) this.player.seekTo(this.state.startPosition)
 }
 /**
  * TODO: get access to url that the admin wants to remove
@@ -70,7 +117,8 @@ handlePlayerEnd(event) {
       url: HOST + `/getNextVideo/${this.props.params.roomName}`,
       contentType: "application/json; charset=utf-8",
     }).done((response) => {
-      this.setState({ video: response.split('=')[1]  });
+      this.setState({ video: response  });
+      this.adminSendVid();
       this.socket.emit('refreshQueue', { room: this.props.params.roomName });
     });
   }
@@ -79,11 +127,8 @@ handlePlayerEnd(event) {
  * This is the callback for the form component to use in onClick.
  * It makes an ajax request to add a new link when the submit button is clicked.
  */
+
 formClick(link) {
-  // TODO this functionality should be replaced with socket logic.
-  // let newQueues = [...this.state.queues];
-  // newQueues.push(link);
-  // this.setState({ queues: newQueues });
   $.ajax({
     url: HOST + '/addToQueue',
     type: "POST",
@@ -103,11 +148,13 @@ formClick(link) {
  */
 componentDidMount() {
   this.getData();
+  this.admin = this.userIsAdmin();
   this.socket.emit('room', { roomName: this.props.params.roomName });
   this.socket.on('newdata', this.getData);
-  this.socket.on('pauseVideo', () => {
-    this.
-  }
+  this.socket.on('play', this.playVideo);
+  this.socket.on('pause', this.pauseVideo);
+  this.socket.on('newUser', this.adminSendVid);
+  this.socket.on('vidUrl', this.setCurrentVideo);
 }
 
 render() {
@@ -121,7 +168,10 @@ render() {
     <div className="youtube-wrapper">
       <h1>Welcome to QTube! Your room is: {this.props.params.roomName}</h1>
       <Form key={'form-key'} formClick={this.formClick} />
-      <Youtube videoId={videoUrl} onEnd={this.handlePlayerEnd} onStateChange={this.handleStateChange} />
+      <ReactPlayer ref={player => { this.player = player }}
+      url={videoUrl} playing={this.state.playing} controls={true}
+      onPlay={this.adminOnPlay} onPause={this.adminOnPause} onEnded={this.handlePlayerEnd} 
+      onProgress={this.onProgress} progressFrequency={500} onReady = {this.syncWithAdmin}/>
       <QueueList queues={this.state.queues} />
     </div>
   )
