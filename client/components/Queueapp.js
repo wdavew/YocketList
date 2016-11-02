@@ -75,10 +75,10 @@ class QueueApp extends Component {
     $.ajax({
       url: HOST + '/increaseVote',
       type: "POST",
-      data: JSON.stringify({ link }),
+      data: JSON.stringify({ link , room: this.props.params.roomName}),
       contentType: "application/json; charset=utf-8",
       dataType: "json"
-    }).done(() => this.socket.emit('votes'))
+    }).done(() => this.socket.emit('refreshQueue', { room: this.props.params.roomName }))
   }
 
   adminOnPause() {

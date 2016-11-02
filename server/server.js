@@ -52,6 +52,8 @@ app.post('/removeFromQueue', queueController.removeFromQueue, (req, res) => {
   return res.status(200).end('successfully removed from queue')
 });
 
+app.post('/increaseVote', queueController.vote)
+
 /* Socket and Server Setup */
 io.on('connection', (socket) => {
   console.log(`User connected ${socket.id}`);
