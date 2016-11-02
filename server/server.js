@@ -11,9 +11,6 @@ var corser = require('corser');
 
 const queueController = require('./queueController.js')
 
-corserListener = corser.create({
-  supportsCredentials: true,
-})
 
 /* Database */
 const qArray = [];
@@ -66,16 +63,30 @@ io.on('connection', (socket) => {
       if (exists) {
         socket.join(data.roomName);
         socket.emit('joiningRoom', { roomName: data.roomName });
+        socket.broadcast.to(data.roomName).emit('newUser');
       } else {
         socket.emit('roomDoesNotExist');
       }
     });
-    
-    //updating data
-    socket.on('refreshQueue', ({room}) => {
-      console.log('request from', room, 'to refresh queue');
-      io.to(room).emit('newdata');
-    });
+  });
+  
+  //updating data
+  socket.on('refreshQueue', ({room}) => {
+    console.log('request from', room, 'to refresh queue');
+    io.to(room).emit('newdata');
+  });
+
+  socket.on('currentVideo', ({room, url, start}) => {
+    console.log('sending current video to new user');
+    socket.broadcast.to(room).emit('vidUrl', {url, start});
+  });
+
+    socket.on('adminPlay', ({room}) => {
+    socket.broadcast.to(room).emit('play');
+  });
+
+    socket.on('adminPause', ({room}) => {
+    socket.broadcast.to(room).emit('pause');
   });
 
 });
