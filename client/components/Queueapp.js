@@ -18,6 +18,7 @@ class QueueApp extends Component {
 
     this.getData = this.getData.bind(this);
     this.formClick = this.formClick.bind(this);
+    this.thumbnailClick = this.thumbnailClick.bind(this);
     this.handleStateChange = this.handleStateChange.bind(this);
     this.handlePlayerEnd = this.handlePlayerEnd.bind(this);
   }
@@ -74,6 +75,19 @@ class QueueApp extends Component {
       dataType: "json",
     }).done(() => this.socket.emit('newdata'))
   }
+    /**
+   * This is the callback for the Queue component to use in onClick.
+   * It makes an ajax request to increase a video's vote by one when a thumbnail is clicked.
+   */
+  thumbnailClick(link) {
+    $.ajax({
+      url: HOST + '/increaseVote',
+      type: "POST",
+      data: JSON.stringify({ link }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json"
+    }).done(() => this.socket.emit('votes'))
+  }
   /**
    * This is where the listeners for this.socket go.
    * on[newData] -> Implies there is a change in data on the backend.
@@ -101,7 +115,7 @@ class QueueApp extends Component {
         <h1>Welcome to QTube! Your room is: {this.props.params.roomName}</h1>
         <Form key={'form-key'} formClick={this.formClick} />
         <Youtube id="youtube-component" videoId={videoUrl} onEnd={this.handlePlayerEnd} onStateChange={this.handleStateChange} />
-        <QueueList queues={this.state.queues} />
+        <QueueList thumbnailClick={this.thumbnailClick} queues={this.state.queues} />
       </div>
     )
   }
