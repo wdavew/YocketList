@@ -18,9 +18,11 @@ class QueueApp extends Component {
       startPosition: 0,
       played: 0,
     }
+
     this.socket = io.connect(HOST);
     this.getData = this.getData.bind(this);
     this.formClick = this.formClick.bind(this);
+    this.thumbnailClick = this.thumbnailClick.bind(this);
     this.handlePlayerEnd = this.handlePlayerEnd.bind(this);
     this.adminOnPause = this.adminOnPause.bind(this);
     this.adminOnPlay = this.adminOnPlay.bind(this);
@@ -31,16 +33,12 @@ class QueueApp extends Component {
     this.onProgress = this.onProgress.bind(this);
     this.syncWithAdmin = this.syncWithAdmin.bind(this);
   }
-  /**
-   * We GET our data here after each render
-   */
 
   onProgress({played}) {
     const position = parseFloat(played)
     this.setState({played: position});
     console.log(this.state.played);
   }
-
 
   userIsAdmin() {
     return Boolean(localStorage.getItem(`admin${this.props.params.roomName}`))
@@ -69,6 +67,19 @@ class QueueApp extends Component {
       this.socket.emit('adminPlay',  { room: this.props.params.roomName })
     }
   }
+  /**
+   * This is the callback for the Queue component to use in onClick.
+   * It makes an ajax request to increase a video's vote by one when a thumbnail is clicked.
+   */
+  thumbnailClick(link) {
+    $.ajax({
+      url: HOST + '/increaseVote',
+      type: "POST",
+      data: JSON.stringify({ link }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json"
+    }).done(() => this.socket.emit('votes'))
+  }
 
   adminOnPause() {
     if (this.admin) {
@@ -85,7 +96,9 @@ class QueueApp extends Component {
     console.log('pausing');
     this.setState({playing: false});
   }
-
+  /**
+   * We GET our data here after each render
+   */
   getData() {
     if (this.state.video === '' && this.admin) {
         $.ajax({
@@ -172,7 +185,7 @@ render() {
       url={videoUrl} playing={this.state.playing} controls={true}
       onPlay={this.adminOnPlay} onPause={this.adminOnPause} onEnded={this.handlePlayerEnd} 
       onProgress={this.onProgress} progressFrequency={500} onReady = {this.syncWithAdmin}/>
-      <QueueList queues={this.state.queues} />
+      <QueueList thumbnailClick={this.thumbnailClick} queues={this.state.queues} />
     </div>
   )
 }
