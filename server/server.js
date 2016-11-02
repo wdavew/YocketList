@@ -39,7 +39,7 @@ app.post('/createRoom', queueController.createRoom)
 app.get('/queue/:room', queueController.getQueue);
 
 // get next video in queue
-app.get('/getNextVideo', queueController.getNextVideo);
+app.get('/getNextVideo/:room', queueController.getNextVideo);
 
 // post request to add a video to a room's queue
 app.post('/addToQueue', queueController.addToQueue, (req, res) => {
@@ -69,14 +69,19 @@ io.on('connection', (socket) => {
         socket.emit('roomDoesNotExist');
       }
     });
+    
+    //updating data
+    socket.on('refreshQueue', ({room}) => {
+      console.log('request from', room, 'to refresh queue');
+      io.to(room).emit('newdata');
+    });
   });
+
 });
 
+  /////
+  http.listen(3000, () => {
+    console.log("Server started on port 3000");
+  });
 
-
-/////
-http.listen(3000, () => {
-  console.log("Server started on port 3000");
-});
-
-module.exports = { app };
+  module.exports = { app };
