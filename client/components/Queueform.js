@@ -6,8 +6,8 @@ const QueueForm = ({ formClick }) => {
  * to make the ajax request and clear the form.
  * preventDefault is used to prevent a page refresh.
  */
-  function handleClick(e) {
-    e.preventDefault();
+const handleClick = (clickEvent) => {
+    clickEvent.preventDefault();
     const form = document.forms.addLink;
     const link = form.link;
     formClick(link.value)

@@ -20,36 +20,24 @@ class QueueApp extends Component {
     }
 
     this.socket = io.connect(HOST);
-    this.getData = this.getData.bind(this);
-    this.formClick = this.formClick.bind(this);
-    this.thumbnailClick = this.thumbnailClick.bind(this);
-    this.handlePlayerEnd = this.handlePlayerEnd.bind(this);
-    this.adminOnPause = this.adminOnPause.bind(this);
-    this.adminOnPlay = this.adminOnPlay.bind(this);
-    this.adminSendVid = this.adminSendVid.bind(this);
-    this.setCurrentVideo = this.setCurrentVideo.bind(this);
-    this.pauseVideo = this.pauseVideo.bind(this);
-    this.playVideo = this.playVideo.bind(this);
-    this.onProgress = this.onProgress.bind(this);
-    this.syncWithAdmin = this.syncWithAdmin.bind(this);
   }
 
-  onProgress({played}) {
-    const position = parseFloat(played)
+  onProgress = ({played}) => {
+    const position = parseFloat(played);
     this.setState({played: position});
     console.log(this.state.played);
   }
 
-  userIsAdmin() {
+  userIsAdmin = () => {
     return Boolean(localStorage.getItem(`admin${this.props.params.roomName}`))
   }
 
-  setCurrentVideo({url, start}) {
+  setCurrentVideo = ({url, start}) => {
       console.log('received url', url);
       this.setState({video: url, startPosition: start})
     }
 
- adminSendVid() {
+ adminSendVid = () => {
     console.log('adminsendvid');
     console.log(this.admin);
     if (this.admin) {
@@ -62,16 +50,18 @@ class QueueApp extends Component {
     }
   }
 
-  adminOnPlay() {
-    if (this.admin) {
-      this.socket.emit('adminPlay',  { room: this.props.params.roomName })
-    }
+  adminOnPlay = () => {
+    if (this.admin) this.socket.emit('adminPlay', { room: this.props.params.roomName });
+  }
+  
+  adminOnPause = () => {
+    if (this.admin) this.socket.emit('adminPause', { room: this.props.params.roomName });
   }
   /**
    * This is the callback for the Queue component to use in onClick.
    * It makes an ajax request to increase a video's vote by one when a thumbnail is clicked.
    */
-  thumbnailClick(link) {
+  thumbnailClick = (link) => {
     $.ajax({
       url: HOST + '/increaseVote',
       type: "POST",
@@ -81,25 +71,19 @@ class QueueApp extends Component {
     }).done(() => this.socket.emit('refreshQueue', { room: this.props.params.roomName }))
   }
 
-  adminOnPause() {
-    if (this.admin) {
-      this.socket.emit('adminPause',  { room: this.props.params.roomName })
-    }
-  }
-
-  playVideo()  { 
+  playVideo = ()  => { 
     console.log('playing video');
     this.setState({playing: true});
   }
 
-  pauseVideo() {
+  pauseVideo = () => {
     console.log('pausing');
     this.setState({playing: false});
   }
   /**
    * We GET our data here after each render
    */
-  getData() {
+  getData = () => {
     if (this.state.video === '' && this.admin) {
         $.ajax({
           type: "GET",
@@ -115,7 +99,7 @@ class QueueApp extends Component {
     }
   }
 
-syncWithAdmin() {
+syncWithAdmin = () => {
   if (!this.admin) this.player.seekTo(this.state.startPosition)
 }
 /**
@@ -123,7 +107,7 @@ syncWithAdmin() {
  */
 
 
-handlePlayerEnd(event) {
+handlePlayerEnd = (event) => {
   if (this.admin) {
     $.ajax({
       type: "GET",
@@ -141,7 +125,7 @@ handlePlayerEnd(event) {
  * It makes an ajax request to add a new link when the submit button is clicked.
  */
 
-formClick(link) {
+formClick = (link) => {
   $.ajax({
     url: HOST + '/addToQueue',
     type: "POST",
@@ -155,9 +139,9 @@ formClick(link) {
  * on[newData] -> Implies there is a change in data on the backend.
  *                The callback will make a GET request and update state
  *                with the new list of Youtube URLs.
- * on[joiningRoom] -> Implies someone has created a room.
- *                    The callback will update our roomName in the constructor
- *                    with the input value typed into the Home createRoom form.
+ * on[room] -> Implies someone has created a room.
+ *             The callback will update our roomName in the constructor
+ *             with the input value typed into the Home createRoom form.
  */
 componentDidMount() {
   this.getData();
@@ -183,9 +167,9 @@ render() {
       <Form key={'form-key'} formClick={this.formClick} />
       <div className="youtube-wrapper">
         <ReactPlayer id='youtube-component' ref={player => { this.player = player }}
-        url={videoUrl} playing={this.state.playing} controls={true}
-        onPlay={this.adminOnPlay} onPause={this.adminOnPause} onEnded={this.handlePlayerEnd} 
-        onProgress={this.onProgress} progressFrequency={500} onReady = {this.syncWithAdmin}/>
+          url={videoUrl} playing={this.state.playing} controls={true}
+          onPlay={this.adminOnPlay} onPause={this.adminOnPause} onEnded={this.handlePlayerEnd} 
+          onProgress={this.onProgress} progressFrequency={500} onReady = {this.syncWithAdmin}/>
         <QueueList thumbnailClick={this.thumbnailClick} queues={this.state.queues} />
       </div>
     </div>
