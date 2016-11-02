@@ -10,42 +10,48 @@ const HOST = "http://localhost:3000";
 class QueueApp extends Component {
   constructor(props) {
     super(props);
-    this.state = { queues: [] }
+    this.state = {
+      queues: [],
+      video: ''
+    }
     this.socket = io.connect(HOST);
 
     this.getData = this.getData.bind(this);
     this.formClick = this.formClick.bind(this);
     this.handleStateChange = this.handleStateChange.bind(this);
     this.handlePlayerEnd = this.handlePlayerEnd.bind(this);
-  } 
+  }
   /**
    * We GET our data here after each render
    */
   getData() {
-    $.get(HOST + "/queue").done(data => this.setState({ queues: data }));
+    console.log('received message to get new data');
+    $.get(HOST + `/queue/${this.props.params.roomName}`).done(data => this.setState({ queues: data }));
   }
-    /**
-   * handleStateChange is an event listener for the react-youtube
-   * component's state. The states are as follows:
-   * UNSTARTED: -1, ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3, CUED: 5
-   */
+  /**
+ * handleStateChange is an event listener for the react-youtube
+ * component's state. The states are as follows:
+ * UNSTARTED: -1, ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3, CUED: 5
+ */
   handleStateChange(event) {
     // CUED was a good option for enabling "auto play" because it waits
     // until the player is loaded (-1) and then the video is cued ready to play.
     // ENDED allows repeat behavior for last video.
-    if (event.data === 5 || event.data === 0) event.target.playVideo();
+    if (event.data === 5) event.target.playVideo();
   }
-/**
- * This method makes a post request to the server with the body {method: 'delete'}
- * This removes an item from the db and notifies all clients with the newdata event.
- */
+  /**
+   * TODO: get access to url that the admin wants to remove
+   */
   handlePlayerEnd(event) {
-    $.ajax({
-      type: "POST",
-      url: HOST + "/queue",
-      data: JSON.stringify({ method: "delete" }),
-      contentType: "application/json; charset=utf-8",
-    });
+
+    if (localStorage.getItem(`admin${this.props.params.roomName}`)) {
+      $.ajax({
+        type: "GET",
+        url: HOST + `/getNextVideo/${this.props.params.roomName}`,
+        contentType: "application/json; charset=utf-8",
+      }).done(response => setState({ video: response }));
+    }
+
   }
   /**
    * This is the callback for the form component to use in onClick.
@@ -54,15 +60,15 @@ class QueueApp extends Component {
   formClick(link) {
     // TODO this functionality should be replaced with socket logic.
     let newQueues = [...this.state.queues];
-    newQueues.push(link); 
+    newQueues.push(link);
     this.setState({ queues: newQueues });
     $.ajax({
-      url: HOST + "/queue",
-      type:"POST",
-      data: JSON.stringify({ link: link }),
-      contentType:"application/json; charset=utf-8",
-      dataType:"json",
-    });
+      url: HOST + '/addToQueue',
+      type: "POST",
+      data: JSON.stringify({ link: link, room: this.props.params.roomName }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+    }).done(() => this.socket.emit('newdata'))
   }
   /**
    * This is where the listeners for this.socket go.
@@ -75,6 +81,7 @@ class QueueApp extends Component {
    */
   componentDidMount() {
     this.getData();
+    this.socket.emit('room', {roomName: this.props.params.roomName});
     this.socket.on('newdata', this.getData);
   }
 
