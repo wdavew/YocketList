@@ -100,7 +100,7 @@ class QueueApp extends Component {
       <div className="youtube-wrapper">
         <h1>Welcome to QTube! Your room is: {this.props.params.roomName}</h1>
         <Form key={'form-key'} formClick={this.formClick} />
-        <Youtube videoId={videoUrl} onEnd={this.handlePlayerEnd} onStateChange={this.handleStateChange} />
+        <Youtube id="youtube-component" videoId={videoUrl} onEnd={this.handlePlayerEnd} onStateChange={this.handleStateChange} />
         <QueueList queues={this.state.queues} />
       </div>
     )

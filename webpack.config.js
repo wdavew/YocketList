@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   devServer: {
@@ -35,5 +36,14 @@ module.exports = {
         loaders: ['style', 'css', 'sass']
       }
     ]
-  }
+  }, 
+ // additional functionality. htmlwebpackplugin or minify goes here
+ plugins: [
+   // Auto generate our html page https://www.npmjs.com/package/html-webpack-plugin
+   new HtmlWebpackPlugin({
+     template: path.join(__dirname, 'client/index.html'),
+     appMountId: 'App',
+     title: 'Index',
+   })
+ ]
 };
