@@ -1,5 +1,4 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   devServer: {
@@ -20,8 +19,8 @@ module.exports = {
   },
   // specifies where webpack will dump the compiled files
   output: { 
-    path: './dist/',
-    filename: '[name].bundle.js',
+    path: './public',
+    filename: 'bundle.js',
   },
   // loader specifies the preprocessor
   module: {
@@ -30,16 +29,11 @@ module.exports = {
         test: /\.jsx?/, 
         loader: 'babel',
         include: path.join(__dirname, 'client')
+      },
+      {
+        test: /\.s?css$/,
+        loaders: ['style', 'css', 'sass']
       }
     ]
-  }, 
-  // additional functionality. htmlwebpackplugin or minify goes here
-  plugins: [
-    // Auto generate our html page https://www.npmjs.com/package/html-webpack-plugin
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'client/index.html'),
-      appMountId: 'App',
-      title: 'Index',
-    })
-  ]
+  }
 };
