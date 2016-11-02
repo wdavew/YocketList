@@ -19,7 +19,7 @@ module.exports = {
     'react/lib/ReactContext': true
   },
   // specifies where webpack will dump the compiled files
-  output: { 
+  output: {
     path: './public',
     filename: 'bundle.js',
   },
@@ -27,16 +27,16 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.jsx?/, 
+        test: /\.jsx?/,
         loader: 'babel',
         include: path.join(__dirname, 'client')
       },
       {
-        test: /\.s?css$/,
-        loaders: ['style', 'css', 'sass']
+        test: /\.css$/,
+        loader: "style-loader!css-loader"
       }
     ]
-  }, 
+  },
  // additional functionality. htmlwebpackplugin or minify goes here
  plugins: [
    // Auto generate our html page https://www.npmjs.com/package/html-webpack-plugin
@@ -47,3 +47,4 @@ module.exports = {
    })
  ]
 };
+
