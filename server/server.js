@@ -91,6 +91,11 @@ io.on('connection', (socket) => {
     socket.broadcast.to(room).emit('pause');
   });
 
+    socket.on('adminLeaving', ({room}) => {
+      console.log('admin leaving for room', room);
+      socket.broadcast.to(room).emit('adminLeft')
+    })
+
 });
 
   /////
