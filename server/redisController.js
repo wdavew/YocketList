@@ -28,8 +28,10 @@ let red = {
 	},
 
 	//increments score of a video
-	 incScore: function (roomNum, videoUrl) {
-		return client.zincrbyAsync([`${roomNum}videos`, 1, videoUrl])
+	 incScore: function (videoUrl, roomNum) {
+		 console.log(videoUrl);
+		 console.log(`${roomNum}videos`);
+		return client.zincrbyAsync(`${roomNum}videos`, 1, videoUrl)
 			.then(resp => Number(resp))
 			.catch(err => {
 				throw (err)
@@ -64,7 +66,20 @@ let red = {
 
 	// returns all videos in queue sorted by votes (descending) as an array
 	returnQueue: function (roomNum) {
-		return client.zrevrangeAsync([`${roomNum}videos`, 0, -1])
+		const outputList = [];
+		return client.zrevrangeAsync(`${roomNum}videos`, 0, -1, 'WITHSCORES')
+		.then(resp => {
+				let obj = {}
+				resp.forEach((val, index) => {
+			if (index % 2 == 0) obj.url = val;
+			else {
+				obj.score = val;
+				outputList.push(obj);
+				console.log(outputList);
+				obj = {}
+			}
+				});
+		}).then(() => outputList);
 	}, 
 
 	// removes a video from the queuxe and throws error if the url is not currently queued
