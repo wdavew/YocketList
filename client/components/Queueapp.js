@@ -28,7 +28,7 @@ class QueueApp extends Component {
     this.setState({played: position});
     console.log(this.state.played);
   }
-  userIsAdmin() {
+  userIsAdmin = () => {
     return Boolean(sessionStorage.getItem(`admin${this.props.params.roomName}`))
   }
 
@@ -61,7 +61,7 @@ class QueueApp extends Component {
    * This is the callback for the Queue component to use in onClick.
    * It makes an ajax request to increase a video's vote by one when a thumbnail is clicked.
    */
-  thumbnailClick(link) {
+  thumbnailClick = (link) => {
     if (!Boolean(localStorage.getItem(`${link}${this.props.params.roomName}voted`))) {
       $.ajax({
         url: HOST + '/increaseVote',
@@ -108,12 +108,12 @@ syncWithAdmin = () => {
   if (!this.admin) this.player.seekTo(this.state.startPosition)
 }
 
-alertAdminLeaving(e) {
+alertAdminLeaving = (e) => {
     console.log('leaving');
   if (this.admin) this.socket.emit('adminLeaving', {room: this.props.params.roomName})
 }
 
-clearRoom() {
+clearRoom = () => {
   console.log('clearing room');
    browserHistory.push(`/deadRoom`)
 }

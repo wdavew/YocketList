@@ -12,7 +12,7 @@ class Queue extends Component {
       <div>
         <img className="images" onDoubleClick={() => this.props.thumbnailClick(this.props.link)} 
         src={`https://i.ytimg.com/vi/${this.props.link.split('=')[1]}/hqdefault.jpg`}></img>;
-        <p>{Math.floor(score)}</p>
+        <p>{Math.floor(this.props.score)}</p>
       </div>
     );
   }
