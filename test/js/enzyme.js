@@ -1,5 +1,5 @@
 import React from 'react'
-import { shallow } from 'enzyme';
+import { shallow, mount, render } from 'enzyme';
 import chai from 'chai';
 import { expect } from 'chai'
 import chaiEnzyme from 'chai-enzyme'
@@ -49,8 +49,8 @@ describe('React unit tests', () => {
   describe('<Queue />', () => {
     before(() => wrapper = shallow(<Queue link="https://www.youtube.com/watch?v=psGrFW69l8Q" />));
 
-    it('Should render <img>', () => {
-      expect(wrapper.type()).to.equal('img');
+    it('Should render <div>', () => {
+      expect(wrapper.type()).to.equal('div');
     });
   });
 
@@ -61,16 +61,8 @@ describe('React unit tests', () => {
       expect(wrapper).to.have.state('queues').deep.equal([]);
     });
 
-    it('Should render <div> with class "youtube-wrapper"', () => {
-      expect(wrapper.find('div')).to.have.className('youtube-wrapper')
-    });
-  });
-
-  xdescribe('<RouteNotFound />', () => {
-    before(() => wrapper = shallow(<RouteNotFound />));
-
-   it('Should render <h1>', () => {
-      expect(wrapper.type()).to.equal('h1');
+    it('Should render <div>', () => {
+      expect(wrapper).to.have.tagName('div');
     });
   });
 
