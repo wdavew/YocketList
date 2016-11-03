@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
 
-const DeadRoom = () => <h1> Your host has left the room and everything is over forever now :( </h1>
+const DeadRoom = () => <h2> Your host has left the room and everything is over forever now :( </h2>
 
 export default DeadRoom

@@ -5,13 +5,18 @@ html {
 }
 
 p {
-  font-size: 10px;
-  margin: 0 auto;
-  width: 20px;
+  font-size: 20px;
+  margin: 10px auto 20px auto;
+  width: 64px;
   height: 20px;
+  text-align: center;
   left: 0;
+  border-radius: 5px;
+  border: 1px solid #802020;
   right: 0;
-  text-align: left;
+  background-color: #d03535;
+  color: white;
+  font-weight: bold;
 }
 
 .youtube-wrapper {
@@ -23,13 +28,13 @@ p {
 
 #eachImg{
   width: 160px;
-  margin: 0 auto;
+  margin: 0px 3px 0px 0px;
   display: inline-block;
 }
 
-.queueDiv{
-  margin: 0 auto;
-  width: 640px;
+#queueDiv{
+  margin: 25px auto;
+  width: 670px;
   left: 0;
   right: 0;
   display: inline-block;
@@ -65,10 +70,12 @@ h1 {
 }
 
 img.images {
- width: 150px;
- height: 150px;
- margin: 0px 0px 0 0;
- display: inline-block;
+    border: 1px solid white;
+    border-radius: 8px;
+    width: 150px;
+    height: 150px;
+    margin: 0px 0px 0 0;
+    display: inline-block;
 }
 
 

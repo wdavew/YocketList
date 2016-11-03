@@ -5,7 +5,7 @@
   "main": "server/server.js",
   "scripts": {
     "test": "mocha test",
-    "start": "webpack-dev-server",
+    "start": "webpack-dev-server --inline --hot",
     "serve": "nodemon server/server.js",
     "build": "webpack -w"
   },

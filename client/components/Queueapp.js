@@ -62,7 +62,9 @@ class QueueApp extends Component {
    * It makes an ajax request to increase a video's vote by one when a thumbnail is clicked.
    */
   thumbnailClick = (link) => {
+    console.log('clicked on image');
     if (!Boolean(localStorage.getItem(`${link}${this.props.params.roomName}voted`))) {
+      console.log('sending request to increase vote');
     fetch(HOST + '/increaseVote', {
       method: "POST",
       body: JSON.stringify({ link, room: this.props.params.roomName }),
@@ -71,6 +73,7 @@ class QueueApp extends Component {
       })
     }).then(res => res.json()
         .then(() => {
+          console.log('refreshing queue');
           this.socket.emit('refreshQueue', { room: this.props.params.roomName });
           localStorage.setItem(`${link}${this.props.params.roomName}voted`, 'true')
         }))
