@@ -3,6 +3,39 @@ html {
   padding: 0;
   border: 0;
 }
+
+p {
+  font-size: 10px;
+  margin: 0 auto;
+  width: 20px;
+  height: 20px;
+  left: 0;
+  right: 0;
+  text-align: left;
+}
+
+.youtube-wrapper {
+  margin: auto;
+  width: 640px;
+  left: 0;
+  right: 0;
+}
+
+#eachImg{
+  width: 160px;
+  margin: 0 auto;
+  display: inline-block;
+}
+
+.queueDiv{
+  margin: 0 auto;
+  width: 640px;
+  left: 0;
+  right: 0;
+  display: inherit;
+}
+
+
 body {
   font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
   line-height: 1.4em;
@@ -14,6 +47,7 @@ body {
   -webkit-font-smoothing: antialiased;
   font-weight: 300;
 }
+
 h1 {
   text-align: center;
   display: block;
@@ -23,26 +57,21 @@ h1 {
   margin-top: 100px;
   font-size: 80px;
 }
+
 #youtube-component {
   width: 640px;
   margin: 50px auto;
   display: block;
 }
-.youtube-wrapper {
-  margin: auto;
-  width: 640px;
-  left: 0;
-  right: 0;
+
+img.images {
+ width: 150px;
+ height: 150px;
+ margin: 0px 0px 0 0;
+ display: inline-block;
 }
-.images {
-  width: 150px;
-  height: 150px;
-  margin: 10px 10px 0 0;
-}
-#queueDiv {
-  width: 600px;
-  height: 1000px;
-}
+
+
 button {
   border-top: 1px solid #f7979f;
   background: #ff0000;
@@ -73,6 +102,7 @@ button:hover {
   background: #f7000c;
   color: #ffffff;
 }
+
 button:active {
   border-top-color: #ff0000;
   background: #ff0000;
