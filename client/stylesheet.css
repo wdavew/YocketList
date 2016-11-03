@@ -32,7 +32,7 @@ p {
   width: 640px;
   left: 0;
   right: 0;
-  display: inherit;
+  display: inline-block;
 }
 
 

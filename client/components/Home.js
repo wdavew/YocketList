@@ -15,7 +15,6 @@ class Home extends Component {
     const form = document.forms.createRoom;
     const roomName = form.roomToCreate.value;
     
-<<<<<<< HEAD
     fetch(HOST + "/createRoom", {
       method: "POST",
       body: JSON.stringify({ roomName }),
@@ -24,23 +23,9 @@ class Home extends Component {
         'Content-Type': 'application/json'
       })
     }).then(() => {
-      localStorage.setItem(`admin${roomName}`, 'true')
+      sessionStorage.setItem(`admin${roomName}`, 'true')
       browserHistory.push(`/queue/${roomName}`)
     }).catch(() => alert('room name taken'));
-    
-=======
-    $.ajax({
-      type: "POST",
-      url: HOST + "/createRoom",
-      data: JSON.stringify({ roomName }),
-      contentType: "application/json; charset=utf-8",
-    })
-      .done(() => {
-        sessionStorage.setItem(`admin${roomName}`, 'true')
-        browserHistory.push(`/queue/${roomName}`)
-      })
-      .fail(() => alert('room name taken'));
->>>>>>> 3ebbe36bf532c2d74cf18701605650209bc0967c
     form.roomToCreate.value = '';
   }
 

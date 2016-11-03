@@ -75,8 +75,8 @@ class QueueApp extends Component {
           localStorage.setItem(`${link}${this.props.params.roomName}voted`, 'true')
         }))
       .catch(error => console.error('Error voting on thumbnail'));
+    }
   }
-
   playVideo = ()  => { 
     console.log('playing video');
     this.setState({playing: true});
@@ -90,18 +90,22 @@ class QueueApp extends Component {
    * We GET our data here after each render
    */
   getData = () => {
+    console.log('get data called');
     if (this.state.video === '' && this.admin) {
+      console.log('getting next video');
       fetch(HOST + `/getNextVideo/${this.props.params.roomName}`)
-        .then(res => res.json()
-          .then(res => {
+        .then(res => res.json())
+        .then(res => {
+          console.log('response from get data', res);
           this.setState({ video: res });
           this.adminSendVid()
           this.socket.emit('refreshQueue', { room: this.props.params.roomName });
-        })).catch(error => console.error(error))
+        })
+        .catch(error => console.error(error))
       } else {
       fetch(HOST + `/queue/${this.props.params.roomName}`)
-        .then(res => res.json()
-          .then(data => this.setState({ queues: data })))
+        .then(res => res.json())
+        .then(data => this.setState({ queues: data }))
         .catch(error => console.error('Error getting data in QueueApp', error))
     }
   }
@@ -124,12 +128,13 @@ clearRoom = () => {
 handlePlayerEnd = (event) => {
   if (this.admin) {
     fetch(HOST + `/getNextVideo/${this.props.params.roomName}`)
-      .then(res => res.json()
-        .then(res => {
+      .then(res => res.json())
+      .then(res => {
         this.setState({ video: res });
         this.adminSendVid();
         this.socket.emit('refreshQueue', { room: this.props.params.roomName });
-      })).catch(error => console.error('Error handling end of video'));
+      })
+      .catch(error => console.error('Error handling end of video'));
   }
 }
 /**
@@ -138,6 +143,7 @@ handlePlayerEnd = (event) => {
  */
 
 formClick = (link) => {
+  console.log('submitting form');
   fetch(HOST + '/addToQueue', {
     method: "POST",
     body: JSON.stringify({ link: link, room: this.props.params.roomName }),
@@ -145,8 +151,7 @@ formClick = (link) => {
     headers: new Headers({
       'Content-Type': 'application/json'
     })
-  }).then(res => res.json()
-      .then(() => this.socket.emit('newdata')))
+  }).then(() =>  console.log('sent request'))  
     .catch(error => console.error('Error adding video to queue'));
 }
 /**
