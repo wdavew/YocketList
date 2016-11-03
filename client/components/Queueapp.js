@@ -63,17 +63,18 @@ class QueueApp extends Component {
    */
   thumbnailClick = (link) => {
     if (!Boolean(localStorage.getItem(`${link}${this.props.params.roomName}voted`))) {
-      $.ajax({
-        url: HOST + '/increaseVote',
-        type: "POST",
-        data: JSON.stringify({ link , room: this.props.params.roomName}),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"
-      }).done(() => {
-        localStorage.setItem(`${link}${this.props.params.roomName}voted`, 'true')
-        this.socket.emit('refreshQueue', { room: this.props.params.roomName })
+    fetch(HOST + '/increaseVote', {
+      method: "POST",
+      body: JSON.stringify({ link, room: this.props.params.roomName }),
+      headers: new Headers({
+        'Content-Type': 'application/json'
       })
-    }
+    }).then(res => res.json()
+        .then(() => {
+          this.socket.emit('refreshQueue', { room: this.props.params.roomName });
+          localStorage.setItem(`${link}${this.props.params.roomName}voted`, 'true')
+        }))
+      .catch(error => console.error('Error voting on thumbnail'));
   }
 
   playVideo = ()  => { 
@@ -90,17 +91,18 @@ class QueueApp extends Component {
    */
   getData = () => {
     if (this.state.video === '' && this.admin) {
-        $.ajax({
-          type: "GET",
-          url: HOST + `/getNextVideo/${this.props.params.roomName}`,
-          contentType: "application/json; charset=utf-8",
-        }).done((response) => {
-          this.setState({ video: response });
+      fetch(HOST + `/getNextVideo/${this.props.params.roomName}`)
+        .then(res => res.json()
+          .then(res => {
+          this.setState({ video: res });
           this.adminSendVid()
           this.socket.emit('refreshQueue', { room: this.props.params.roomName });
-        })
+        })).catch(error => console.error(error))
       } else {
-      $.get(HOST + `/queue/${this.props.params.roomName}`).done(data => this.setState({ queues: data }));
+      fetch(HOST + `/queue/${this.props.params.roomName}`)
+        .then(res => res.json()
+          .then(data => this.setState({ queues: data })))
+        .catch(error => console.error('Error getting data in QueueApp', error))
     }
   }
 
@@ -121,16 +123,13 @@ clearRoom = () => {
 
 handlePlayerEnd = (event) => {
   if (this.admin) {
-    $.ajax({
-      type: "GET",
-      url: HOST + `/getNextVideo/${this.props.params.roomName}`,
-      contentType: "application/json; charset=utf-8",
-    }).done((response) => {
-      this.setState({ video: response  });
-      localStorage.remove(`${response}${this.props.params.roomName}voted`)
-      this.adminSendVid();
-      this.socket.emit('refreshQueue', { room: this.props.params.roomName });
-    });
+    fetch(HOST + `/getNextVideo/${this.props.params.roomName}`)
+      .then(res => res.json()
+        .then(res => {
+        this.setState({ video: res });
+        this.adminSendVid();
+        this.socket.emit('refreshQueue', { room: this.props.params.roomName });
+      })).catch(error => console.error('Error handling end of video'));
   }
 }
 /**
@@ -139,13 +138,16 @@ handlePlayerEnd = (event) => {
  */
 
 formClick = (link) => {
-  $.ajax({
-    url: HOST + '/addToQueue',
-    type: "POST",
-    data: JSON.stringify({ link: link, room: this.props.params.roomName }),
-    contentType: "application/json; charset=utf-8",
-    dataType: "json",
-  }).done(() => this.socket.emit('newdata'))
+  fetch(HOST + '/addToQueue', {
+    method: "POST",
+    body: JSON.stringify({ link: link, room: this.props.params.roomName }),
+    mode: 'cors',
+    headers: new Headers({
+      'Content-Type': 'application/json'
+    })
+  }).then(res => res.json()
+      .then(() => this.socket.emit('newdata')))
+    .catch(error => console.error('Error adding video to queue'));
 }
 /**
  * This is where the listeners for this.socket go.
