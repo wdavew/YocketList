@@ -10,8 +10,9 @@ class Queue extends Component {
   render() {
     return (
       <div>
-        <img className="images" onDoubleClick={() => this.props.thumbnailClick(this.props.link)} src={`https://i.ytimg.com/vi/${this.props.link.split('=')[1]}/hqdefault.jpg`}></img>;
-        <p>{this.props.score}</p>
+        <img className="images" onDoubleClick={() => this.props.thumbnailClick(this.props.link)} 
+        src={`https://i.ytimg.com/vi/${this.props.link.split('=')[1]}/hqdefault.jpg`}></img>;
+        <p>{Math.floor(this.props.score)}</p>
       </div>
     );
   }

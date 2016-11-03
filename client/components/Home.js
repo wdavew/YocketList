@@ -20,11 +20,12 @@ class Home extends Component {
       url: HOST + "/createRoom",
       data: JSON.stringify({ roomName }),
       contentType: "application/json; charset=utf-8",
-    }).done(() => {
-      localStorage.setItem(`admin${roomName}`, 'true')
-      browserHistory.push(`/queue/${roomName}`)
-    }).fail(() => alert('room name taken'));
-    
+    })
+      .done(() => {
+        sessionStorage.setItem(`admin${roomName}`, 'true')
+        browserHistory.push(`/queue/${roomName}`)
+      })
+      .fail(() => alert('room name taken'));
     form.roomToCreate.value = '';
   }
 
