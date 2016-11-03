@@ -15,15 +15,17 @@ class Home extends Component {
     const form = document.forms.createRoom;
     const roomName = form.roomToCreate.value;
     
-    $.ajax({
-      type: "POST",
-      url: HOST + "/createRoom",
-      data: JSON.stringify({ roomName }),
-      contentType: "application/json; charset=utf-8",
-    }).done(() => {
+    fetch(HOST + "/createRoom", {
+      method: "POST",
+      body: JSON.stringify({ roomName }),
+      mode: 'cors',
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    }).then(() => {
       localStorage.setItem(`admin${roomName}`, 'true')
       browserHistory.push(`/queue/${roomName}`)
-    }).fail(() => alert('room name taken'));
+    }).catch(() => alert('room name taken'));
     
     form.roomToCreate.value = '';
   }
