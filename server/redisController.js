@@ -20,10 +20,13 @@ let red = {
 		return client.zscoreAsync(`${roomNum}videos`, videoUrl)
 		.then((response) => {
 			if (response) throw new Error('video already in queue');
-			else return client.zaddAsync([`${roomNum}videos`, 0, videoUrl])
+			else {
+				const tempScore = (1.0 / Math.log(Date.now()))
+				return client.zaddAsync([`${roomNum}videos`, tempScore, videoUrl])
 			.catch((err) => {
 				throw err;
 			});
+			}
 		})
 	},
 

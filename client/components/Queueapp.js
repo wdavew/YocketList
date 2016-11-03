@@ -5,6 +5,7 @@ import Form from './Queueform';
 import QueueList from './Queuelist';
 import io from 'socket.io-client';
 import ReactPlayer from 'react-player'
+import { browserHistory } from 'react-router';
 
 const HOST = "http://localhost:3000";
 
@@ -27,9 +28,8 @@ class QueueApp extends Component {
     this.setState({played: position});
     console.log(this.state.played);
   }
-
   userIsAdmin = () => {
-    return Boolean(localStorage.getItem(`admin${this.props.params.roomName}`))
+    return Boolean(sessionStorage.getItem(`admin${this.props.params.roomName}`))
   }
 
   setCurrentVideo = ({url, start}) => {
@@ -62,6 +62,7 @@ class QueueApp extends Component {
    * It makes an ajax request to increase a video's vote by one when a thumbnail is clicked.
    */
   thumbnailClick = (link) => {
+    if (!Boolean(localStorage.getItem(`${link}${this.props.params.roomName}voted`))) {
     fetch(HOST + '/increaseVote', {
       method: "POST",
       body: JSON.stringify({ link, room: this.props.params.roomName }),
@@ -69,7 +70,10 @@ class QueueApp extends Component {
         'Content-Type': 'application/json'
       })
     }).then(res => res.json()
-        .then(() => this.socket.emit('refreshQueue', { room: this.props.params.roomName })))
+        .then(() => {
+          this.socket.emit('refreshQueue', { room: this.props.params.roomName });
+          localStorage.setItem(`${link}${this.props.params.roomName}voted`, 'true')
+        }))
       .catch(error => console.error('Error voting on thumbnail'));
   }
 
@@ -105,9 +109,16 @@ class QueueApp extends Component {
 syncWithAdmin = () => {
   if (!this.admin) this.player.seekTo(this.state.startPosition)
 }
-/**
- * TODO: get access to url that the admin wants to remove
- */
+
+alertAdminLeaving = (e) => {
+    console.log('leaving');
+  if (this.admin) this.socket.emit('adminLeaving', {room: this.props.params.roomName})
+}
+
+clearRoom = () => {
+  console.log('clearing room');
+   browserHistory.push(`/deadRoom`)
+}
 
 
 handlePlayerEnd = (event) => {
@@ -156,6 +167,14 @@ componentDidMount() {
   this.socket.on('pause', this.pauseVideo);
   this.socket.on('newUser', this.adminSendVid);
   this.socket.on('vidUrl', this.setCurrentVideo);
+  window.addEventListener('unload', (e) => {
+    this.alertAdminLeaving();
+  }, false);
+  this.socket.on('adminLeft', this.clearRoom);
+}
+
+componentWillUnmount() {
+  window.removeEventListener('beforeunload', this.alertAdminLeaving);
 }
 
 render() {
