@@ -7,7 +7,8 @@ import io from 'socket.io-client';
 import ReactPlayer from 'react-player'
 import { browserHistory } from 'react-router';
 
-const HOST = "http://localhost:3000";
+const HOST = 'http://894dcffb.ngrok.io';
+// const HOST = "http://localhost:3000";
 
 class QueueApp extends Component {
   constructor(props) {
@@ -175,14 +176,14 @@ componentDidMount() {
   this.socket.on('pause', this.pauseVideo);
   this.socket.on('newUser', this.adminSendVid);
   this.socket.on('vidUrl', this.setCurrentVideo);
-  window.addEventListener('unload', (e) => {
-    this.alertAdminLeaving();
-  }, false);
+  // window.addEventListener('unload', (e) => {
+  //   this.alertAdminLeaving();
+  // }, false);
   this.socket.on('adminLeft', this.clearRoom);
 }
 
 componentWillUnmount() {
-  window.removeEventListener('beforeunload', this.alertAdminLeaving);
+  this.alertAdminLeaving();
 }
 
 render() {

@@ -11,7 +11,7 @@ var corser = require('corser');
 
 const queueController = require('./queueController.js')
 
-
+app.use(express.static(__dirname + './../public'));
 /* Database */
 const qArray = [];
 
@@ -41,6 +41,7 @@ app.get('/getNextVideo/:room', queueController.getNextVideo);
 
 // post request to add a video to a room's queue
 app.post('/addToQueue', queueController.addToQueue, (req, res) => {
+  console.log('emitting socket for ', req.body.room);
   io.to(req.body.room).emit('newdata');
   return res.status(200).end('successfully added to queue')
 });

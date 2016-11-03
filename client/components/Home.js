@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import { browserHistory } from 'react-router';
 
-const HOST = "http://localhost:3000";
-
+//const HOST = "http://localhost:3000";
+const HOST = "http://894dcffb.ngrok.io";
 class Home extends Component {
   constructor() {
     super();
